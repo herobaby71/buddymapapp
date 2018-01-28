@@ -5,8 +5,16 @@ import { MapView } from 'expo';
 export default class MapScreen extends Component{
   render(){
     return (
-      <View styles= {{flex:1}}>
-        <Text>Home Page</Text>
+      <View style= {{flex:1}}>
+        <MapView
+            style= {{flex:1}}
+            initialRegion={{
+              latitude: 40.798214,
+              longitude: -77.859909,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+        />
       </View>
     );
   }

@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import { Text, View, Platform} from 'react-native';
 import { Constants, Location, Permissions, MapView } from 'expo';
+import _ from 'lodash'
 import styles from './styles'
 
 export default class MapScreen extends Component{
   constructor(props){
     super(props)
-    state = {
+    this.state = {
       location:null,
       errorMessage:null
     }
@@ -36,26 +37,37 @@ export default class MapScreen extends Component{
 
   render(){
     let text = 'Waiting...'
-    if(this.state.errorMessage){
+    let lat = 40.798214
+    let long = -77.859909
+    if(!_.isEmpty(this.state.errorMessage)){
       text = this.state.errorMessage
     }
-    else if(this.state.location){
+    else if(!_.isEmpty(this.state.location)){
       text = JSON.stringify(this.state.location)
+      lat = this.state.location.coords.latitude
+      long = this.state.location.coords.longitude
     }
     return (
-      <View>
-        <Text style={styles.paragraph}>{text}</Text>
+      <View style = {{flex:1}}>
+        <MapView
+            style= {{flex:1}}
+            initialRegion={{
+              latitude: lat,
+              longitude: long,
+              latitudeDelta: 0.00922,
+              longitudeDelta: 0.00421,
+            }}
+        >
+          <MapView.Marker
+            coordinate={{latitude:lat, longitude:long}}
+            title="My Marker"
+            description="Some description"
+          />
+        </MapView>
       </View>
 
     );
   }
 }
-// <MapView
-//   style={{ flex: 1 }}
-//   initialRegion={{
-//     latitude: 40.798214,
-//     longitude: -77.85990,
-//     latitudeDelta: 0.0922,
-//     longitudeDelta: 0.0421,
-//   }}
-// />
+
+// <Text style={styles.paragraph}>{text}</Text>

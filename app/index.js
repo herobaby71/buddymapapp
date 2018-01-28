@@ -13,9 +13,9 @@ import MapScreen from './screens/MapScreen'
 const Routes = () => (
   <Router hideNavBar={true}>
     <Scene key = "root">
+      <Scene key = "home" component = {Home} hideNavBar={true} {...this.props} />
       <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial/>
     </Scene>
   </Router>
 )
 export default Routes
-// <Scene key = "home" component = {Home} hideNavBar={true} {...this.props}/>
