@@ -10,12 +10,18 @@ import {Provider, connect} from 'react-redux'
 
 import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
+import LoginScreen from './screens/LoginScreen'
+import FriendScreen from './screens/FriendScreen'
+
+const ConnectedRouter = connect()(Router)
 const Routes = () => (
-  <Router hideNavBar={true}>
+  <ConnectedRouter hideNavBar={true}>
     <Scene key = "root">
       <Scene key = "home" component = {Home} hideNavBar={true} {...this.props} />
-      <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial/>
+      <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial/>
+      <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} />
+      <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
     </Scene>
-  </Router>
+  </ConnectedRouter>
 )
 export default Routes
