@@ -16,7 +16,7 @@ class LoginScreen extends Component{
     super(props)
     if(!_.isEmpty(this.props.credentials.tokens.access.value)){
       // Actions.map()
-      
+
     }
   }
 

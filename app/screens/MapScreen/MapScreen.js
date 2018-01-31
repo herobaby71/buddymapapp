@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
-import { Text, View, Platform} from 'react-native';
-import { Constants, Location, Permissions, MapView } from 'expo';
+import { Text, TouchableOpacity, Platform} from 'react-native';
+import { View } from 'react-native-animatable'
+import { Avatar } from 'react-native-elements'
+import { Constants, Location, Permissions} from 'expo';
+import Popover, {PopoverTouchable} from 'react-native-modal-popover'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { connect } from 'react-redux'
 import { postLocationToAPI } from '../../data/location/apis'
 import { fetchFriendsFromAPI } from '../../data/friends/apis'
@@ -13,20 +17,25 @@ class MapScreen extends Component{
   constructor(props){
     super(props)
     this.state = {
-      location:null,
-      errorMessage:null,
-      region:{
-        latitude:40.798214,
-        longitude:-77.859909,
-        latitudeDelta:0.00922,
-        longitudeDelta:0.00421,
-      }
+      popoverAnimation:"bounceIn",
+      popoverVisible:false,
+      location: null,
+      regionSet:false
     }
+    navigator.geolocation.getCurrentPosition(location => {
+        const { latitude, longitude } = location.coords
+        const region = {
+          ...this.state.region,
+          latitude,
+          longitude,
+          latitudeDelta: 0.00411,
+          longitudeDelta: 0.00211,
+        }
+        this.setState({location, region})
+      }
+    )
   }
 
-  // componentDidMount(){
-  //
-  // }
 
   componentWillMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -35,8 +44,8 @@ class MapScreen extends Component{
       });
     } else {
       this.timer = setInterval(this._getLocationAsync, 500)
-      this.timer = setInterval(this._postLocationAsync, 6000)
-      this.timer = setInterval(this.getFriendsList, 6000)
+      this.timer = setInterval(this._postLocationAsync, 2000)
+      this.timer = setInterval(this.getFriendsList, 2000)
     }
   }
 
@@ -73,9 +82,21 @@ class MapScreen extends Component{
   getFriendsList = async () => {
     this.props.getFriends()
   }
+  showPopover = () => {
+    this.setState({popoverVisible:!this.state.popoverVisible})
+  }
 
   render(){
     // Marker of Friends Location.
+    let mymarker = <View></View>
+    if(!_.isEmpty(this.state.location)){
+      mymarker  =
+        <MapView.Marker
+          coordinate={{latitude:this.state.location.coords.latitude, longitude:this.state.location.coords.longitude}}
+          title="My Marker"
+          description="Mushi Mushi"
+        />
+    }
     let friends = this.props.friends
     let markers = friends.map(friend => {
       console.log("friend:",friend)
@@ -88,30 +109,73 @@ class MapScreen extends Component{
         />
       )
     })
-    // Changing Current Location.
-    let lat = 40.798214
-    let long = -77.859909
-    if(!_.isEmpty(this.state.errorMessage)){
-      text = this.state.errorMessage
-    }
-    else if(!_.isEmpty(this.state.location)){
-      text = JSON.stringify(this.state.location)
-      lat = this.state.location.coords.latitude
-      long = this.state.location.coords.longitude
-    }
     return (
       <View style = {{flex:1}}>
         <MapView
-            style= {{flex:1}}
-            initialRegion={this.state.region}
+          provider={PROVIDER_GOOGLE}
+          style= {{flex:1}}
+          onMapReady={() => {
+            this.setState({ regionSet: true });
+          }}
+          initialRegion={this.state.region}
         >
-          <MapView.Marker
-            coordinate={{latitude:lat, longitude:long}}
-            title="My Marker"
-            description="Mushi Mushi"
-          />
+          {mymarker}
           {markers}
         </MapView>
+        <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+           <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
+        </TouchableOpacity>
+        { this.state.popoverVisible &&
+          <View animation="bounceIn" style={styles.bubbleView1}>
+            <View style={styles.bubbleView3}>
+              <PopoverTouchable>
+                <TouchableOpacity style = {styles.bubble3} onPress={this.showPopover}>
+                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
+                </TouchableOpacity>
+                <Popover
+                  contentStyle={styles.content}
+                  arrowStyle={styles.arrow}
+                  backgroundStyle={styles.popoverBackground}
+                  contentStyle={styles.popoverContent}
+                >
+                  <Text>Poke Me!</Text>
+                </Popover>
+              </PopoverTouchable>
+            </View>
+            <View style={styles.bubbleView1}>
+              <PopoverTouchable>
+                <TouchableOpacity style = {styles.bubble1} onPress={this.showPopover}>
+                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
+                </TouchableOpacity>
+                <Popover
+                  contentStyle={styles.content}
+                  arrowStyle={styles.arrow}
+                  backgroundStyle={styles.popoverBackground}
+                  contentStyle={styles.popoverContent}
+                  placement="bottom"
+                >
+                  <Text>Eat Me!</Text>
+                </Popover>
+              </PopoverTouchable>
+            </View>
+            <View style={styles.bubbleView2}>
+              <PopoverTouchable>
+                <TouchableOpacity style = {styles.bubble2} onPress={this.showPopover}>
+                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
+                </TouchableOpacity>
+                <Popover
+                  contentStyle={styles.content}
+                  arrowStyle={styles.arrow}
+                  backgroundStyle={styles.popoverBackground}
+                  contentStyle={styles.popoverContent}
+                  placement="bottom"
+                >
+                  <Text>Hide Me!</Text>
+                </Popover>
+              </PopoverTouchable>
+            </View>
+          </View>
+        }
       </View>
 
     );
@@ -133,3 +197,8 @@ function mapDispatchToProps(dispatch, email="", password="", token="", fbdata=nu
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapScreen)
+
+
+// <TouchableOpacity style = {styles.bubble4} onPress={this.showPopover}>
+//    <Avatar small icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
+// </TouchableOpacity>
