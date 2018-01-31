@@ -2,6 +2,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "dependencies": {
+    "exp": "^49.0.3",
     "expo": "^25.0.0",
     "fetchival": "^0.3.3",
     "lodash": "^4.17.4",
