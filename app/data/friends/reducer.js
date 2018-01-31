@@ -14,7 +14,6 @@ export default function friendsReducer (state = initialState, action) {
     case FETCHING:
       return {
         ...state,
-        friends: [],
         isFetching: true
       }
     case SUCCESS:
