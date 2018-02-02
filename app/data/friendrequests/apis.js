@@ -15,6 +15,7 @@ export function fetchRequestsFromAPI() {
       }
     })
     .catch(error => {
+      throw error
       console.log("error",error)
       dispatch(getRequestsFailure(error))
     })

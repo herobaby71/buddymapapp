@@ -4,8 +4,9 @@ import * as api from './apis';
 import * as selectors from './selectors';
 import * as actionCreators from './actions';
 import { initialState } from './reducer';
+import _ from 'lodash'
 
-const SESSION_TIMEOUT_THRESHOLD = 300; // Will refresh the access token 5 minutes before it expires
+const SESSION_TIMEOUT_THRESHOLD = 10000; // Will refresh the access token 5 minutes before it expires
 
 let sessionTimeout = null;
 
@@ -31,6 +32,7 @@ const onRequestSuccess = (response) => {
 				type: response.token_type,
 				value: response.access_token,
 				expiresIn: response.expires_in,
+				createdAt: Date.now()
 			},
 			refresh:{
 				type: response.token_type,
@@ -48,18 +50,6 @@ const onRequestFailed = (exception) => {
 	throw exception;
 };
 
-export const refreshToken = () => {
-	const session = selectors.get();
-	store.dispatch(actionCreators.updating)
-	if (!session.tokens.refresh.value || !session.user.id) {
-		return Promise.reject();
-	}
-
-	return api.refresh(session.tokens.refresh, session.user)
-	.then(onRequestSuccess)
-	.catch(onRequestFailed);
-};
-
 export const socialAuthenticate = (token) => {
 	store.dispatch(actionCreators.updating())
   return api.authenticateFacebook(token)
@@ -73,6 +63,22 @@ export function authenticate(email, password){
 		.then(onRequestSuccess)
 		.catch(onRequestFailed)
 	}
+}
+export const validateAccessToken = () => {
+	credentials = selectors.get();
+	if(!_.isEmpty(credentials.tokens.access.createdAt) && (Date.now() - credentials.tokens.access.createdAt > credentials.tokens.access.expiresIn*1000 - 3600)){
+		console.log("I am Fresh For Now and Enternity")
+		refreshToken()
+	}
+}
+export function refreshToken(){
+	const session = selectors.get();
+	if (_.isEmpty(session.tokens.refresh.value)) {
+		clearSession()
+	}
+	return api.refresh(session.tokens.refresh.value)
+	.then(onRequestSuccess)
+	.catch(onRequestFailed);
 }
 
 export const revoke = () => {

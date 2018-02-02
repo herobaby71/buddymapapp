@@ -1,27 +1,61 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { ActivityIndicator, AsyncStorage } from 'react-native';
 import {Router,  Scene, Stack} from 'react-native-router-flux'
 import {Provider, connect} from 'react-redux'
+import {authenticate, refreshToken, validateAccessToken} from './services/session'
 
 import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
 import LoginScreen from './screens/LoginScreen'
 import FriendScreen from './screens/FriendScreen'
+import _ from 'lodash'
 
 const ConnectedRouter = connect()(Router)
-const Routes = () => (
-  <ConnectedRouter hideNavBar={true}>
-    <Scene key = "root">
-      <Scene key = "home" component = {Home} hideNavBar={true} {...this.props} />
-      <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial/>
-      <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} />
-      <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
-    </Scene>
-  </ConnectedRouter>
-)
-export default Routes
+class Routes extends Component {
+  constructor(){
+    super()
+    this.state = {hasToken:false, isLoaded:false}
+  }
+  componentDidMount(){
+    console.log("Initial Credentials Check",this.props.credentials)
+    if(_.isEmpty(this.props.credentials.tokens.access.value)){
+      this.setState({isLoaded:true, hasToken:false})
+    }
+    else{
+      credentials = this.props.credentials
+      console.log("Difference in Time:", Date.now() - credentials.tokens.access.createdAt)
+      if(!_.isEmpty(credentials.tokens.access.createdAt) && ((Date.now() - credentials.tokens.access.createdAt) > (Number(credentials.tokens.access.expiresIn)*1000 - 7200))){
+        console.log("Fresher than the Freshiest")
+        refreshToken()
+      }
+      this.setState({isLoaded:true, hasToken:true})
+
+    }
+  }
+
+  render(){
+    if(!this.state.isLoaded){
+      return (
+        <ActivityIndicator />
+      )
+    }
+    return (
+      <ConnectedRouter hideNavBar={true}>
+        <Scene key = "root">
+          <Scene key = "home" component = {Home} hideNavBar={true} {...this.props} />
+          <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken}/>
+          <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken}/>
+          <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
+        </Scene>
+      </ConnectedRouter>
+    )
+  }
+}
+
+function mapStateToProps(state){
+  return {
+    credentials: state.services.session
+  }
+}
+
+export default connect(mapStateToProps, null)(Routes)

@@ -7,6 +7,7 @@ export const initialState = {
       type:null,
       value:null,
       expiresIn:null,
+      createdAt:null
     },
     refresh:{
       type:null,

@@ -4,11 +4,12 @@ import { View } from 'react-native-animatable'
 import { Avatar } from 'react-native-elements'
 import { Constants, Location, Permissions} from 'expo';
 import Popover, {PopoverTouchable} from 'react-native-modal-popover'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
 import { connect } from 'react-redux'
 import { postLocationToAPI } from '../../data/location/apis'
 import { fetchFriendsFromAPI } from '../../data/friends/apis'
 import { fetchApi } from '../../services/api'
+import { validateAccessToken } from '../../services/session'
 
 import _ from 'lodash'
 import styles from './styles'
@@ -17,11 +18,25 @@ class MapScreen extends Component{
   constructor(props){
     super(props)
     this.state = {
+      status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
       popoverVisible:false,
+      currentFriendVisible:-1,
       location: null,
       regionSet:false
     }
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      });
+    } else {
+      this.timer = setInterval(this._getLocationAsync, 500)
+      this.timer = setInterval(this._postLocationAsync, 2000)
+      this.timer = setInterval(this.getFriendsList, 2000)
+      this.timer = setInterval(validateAccessToken, 900000)
+    }
+  }
+  componentDidMount(){
     navigator.geolocation.getCurrentPosition(location => {
         const { latitude, longitude } = location.coords
         const region = {
@@ -36,19 +51,6 @@ class MapScreen extends Component{
     )
   }
 
-
-  componentWillMount() {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this.timer = setInterval(this._getLocationAsync, 500)
-      this.timer = setInterval(this._postLocationAsync, 2000)
-      this.timer = setInterval(this.getFriendsList, 2000)
-    }
-  }
-
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -58,23 +60,22 @@ class MapScreen extends Component{
     }
 
     let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
+    if(this.refs.rootRef)
+      this.setState({ location });
   };
 
   _postLocationAsync = async () =>  {
     if(!_.isEmpty(this.state.location)){
       fetchApi(`api/locator/update/`,payload = {longitude:this.state.location.coords.longitude, latitude:this.state.location.coords.latitude}, method = 'post', headers = {})
       .then(response => {
-        console.log("Response Location:", response)
         if(response.success){
-          console.log("success")
         }
         else{
-          console.log("failure")
         }
       })
       .catch(error => {
         console.log("error",error)
+        throw error
       })
     }
   }
@@ -93,31 +94,36 @@ class MapScreen extends Component{
       mymarker  =
         <MapView.Marker
           coordinate={{latitude:this.state.location.coords.latitude, longitude:this.state.location.coords.longitude}}
-          title="My Marker"
-          description="Mushi Mushi"
+          title= "My Marker"
+          description= "Mushi Mush"
         />
     }
     let friends = this.props.friends
     let markers = friends.map(friend => {
-      console.log("friend:",friend)
       return (
-        <MapView.Marker
+        <Marker
           coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
           key = {friend.email}
-          title= {friend.email}
-          description="Mushi Mushi"
-        />
+          onCalloutPress={event => {console.log(event.nativeEvent)}}
+          title= {friend.firstName.concat(" ", friend.lastName)}
+          description={this.state.status[friend.status]}
+        >
+            <Callout onPress={() => {console.log("Callout Pressed")}}>
+                <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
+                <Text>{this.state.status[friend.status]}</Text>
+            </Callout>
+        </Marker>
       )
     })
     return (
-      <View style = {{flex:1}}>
+      <View style = {{flex:1}} ref="rootRef">
         <MapView
           provider={PROVIDER_GOOGLE}
+          initialRegion={this.state.region}
           style= {{flex:1}}
           onMapReady={() => {
             this.setState({ regionSet: true });
           }}
-          initialRegion={this.state.region}
         >
           {mymarker}
           {markers}
@@ -176,6 +182,12 @@ class MapScreen extends Component{
             </View>
           </View>
         }
+        <View style ={styles.infoBox}>
+          <View style={styles.infoBoxTextView}>
+            <Text style={styles.infoBoxText}>Status Message:</Text>
+            <Text style={styles.infoBoxText}>Distance:</Text>
+          </View>
+        </View>
       </View>
 
     );

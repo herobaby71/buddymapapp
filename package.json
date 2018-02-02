@@ -5,6 +5,7 @@
     "expo": "^25.0.0",
     "fetchival": "^0.3.3",
     "lodash": "^4.17.4",
+    "moment": "^2.20.1",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
     "react-native-animatable": "^1.2.4",

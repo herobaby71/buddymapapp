@@ -40,6 +40,20 @@ export default styles = StyleSheet.create({
   textPopoverView:{
     position:'absolute',
   },
+  infoBox:{
+    position:'absolute',
+    top: Constants.Harin3,
+    right: Constants.Marin3,
+    borderRadius:5,
+    alignItems:'center',
+    backgroundColor: 'rgba(160,160,160,.6)'
+  },
+  infoBoxTextView:{
+    margin: 5,
+  },
+  infoBoxText:{
+    fontSize: Constants.Font20,
+  },
   popoverBackground:{
     backgroundColor: 'rgba(0, 0, 0, 0)'
   },

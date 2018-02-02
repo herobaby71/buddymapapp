@@ -1,3 +1,4 @@
+import fetchival from 'fetchival'
 import { fetchApi } from '../api'
 import apiConfig from '../api/config'
 import * as sessionSelectors from './selectors'
@@ -6,9 +7,9 @@ const endPoints = {
   social_authenticate: 'auth/convert-token/',
   authenticate: 'auth/token/',
   refresh:'auth/token/',
-  revoke: 'auth/revoke-token/'
+  revoke: 'auth/revoke-token/',
+  verify_access: 'api/account/verify/'
 }
-
 
 export const authenticate = (email, password) => fetchApi(endPoints.authenticate,
    {client_id:apiConfig.clientId,
@@ -26,11 +27,31 @@ export const authenticateFacebook = (token) => fetchApi(endPoints.social_authent
     backend:"facebook",
     token:token},'post',{})
 
-export const refresh = refresh_token => fetchApi(endPoints.refresh,
-  {client_id:apiConfig.clientId,
-   client_secret:apiConfig.clientSecret,
-   grant_type:refresh_token,
-   refresh_token:refresh_token},'post',{})
+export const refresh = refresh_token => {
+  console.log("Refresh API is Called")
+  accessToken = null
+  payload = {
+    client_id:apiConfig.clientId,
+    client_secret:apiConfig.clientSecret,
+    grant_type:'refresh_token',
+    refresh_token:refresh_token
+  }
+  return fetchival(`${apiConfig.url}${endPoints.refresh}`, {
+    headers: {}
+  })['post'](payload)
+  .catch((error) => {
+    if(error.response && error.response.json){
+      error.response.json().then((json) => {
+        if(json) throw json
+        console.log("Error:",error)
+        throw error
+      })
+    } else {
+      console.log("Error:",error)
+      throw error
+    }
+  })
+}
 
 export const revoke = token => fetchApi(endPoints.revoke,
   {client_id:apiConfig.clientId,

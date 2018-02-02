@@ -6,7 +6,6 @@ export function fetchFriendsFromAPI() {
     dispatch(getFriends())
     fetchApi(`api/friend/get-friend-list/`,payload = {}, method = 'get', headers = {})
     .then(response => {
-      console.log("Response Friends:", response)
       if(response.success){
         dispatch(getFriendsSuccess(response.friends))
       }
@@ -15,7 +14,7 @@ export function fetchFriendsFromAPI() {
       }
     })
     .catch(error => {
-      console.log("error",error)
+      throw error
       dispatch(getFriendsFailure(error))
     })
   }
