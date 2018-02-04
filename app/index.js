@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { ActivityIndicator, AsyncStorage } from 'react-native';
 import {Router,  Scene, Stack} from 'react-native-router-flux'
 import {Provider, connect} from 'react-redux'
-import {authenticate, refreshToken, validateAccessToken} from './services/session'
-
+import { authenticate, refreshToken, validateAccessToken} from './services/session'
+import { getUserInfo } from './services/user'
 import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
 import LoginScreen from './screens/LoginScreen'
@@ -24,10 +24,12 @@ class Routes extends Component {
     else{
       credentials = this.props.credentials
       console.log("Difference in Time:", Date.now() - credentials.tokens.access.createdAt)
-      if(!_.isEmpty(credentials.tokens.access.createdAt) && ((Date.now() - credentials.tokens.access.createdAt) > (Number(credentials.tokens.access.expiresIn)*1000 - 7200))){
+      console.log("Margin of Reset:", Number(credentials.tokens.access.expiresIn)*1000 - 7200)
+      if(Date.now() - credentials.tokens.access.createdAt > Number(credentials.tokens.access.expiresIn)*1000 - 7200){
         console.log("Fresher than the Freshiest")
         refreshToken()
       }
+      getUserInfo()
       this.setState({isLoaded:true, hasToken:true})
 
     }

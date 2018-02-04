@@ -76,7 +76,7 @@ export function refreshToken(){
 	if (_.isEmpty(session.tokens.refresh.value)) {
 		clearSession()
 	}
-	return api.refresh(session.tokens.refresh.value)
+	api.refresh(session.tokens.refresh.value)
 	.then(onRequestSuccess)
 	.catch(onRequestFailed);
 }

@@ -10,6 +10,7 @@ import { postLocationToAPI } from '../../data/location/apis'
 import { fetchFriendsFromAPI } from '../../data/friends/apis'
 import { fetchApi } from '../../services/api'
 import { validateAccessToken } from '../../services/session'
+import { getUser } from '../../services/user'
 
 import _ from 'lodash'
 import styles from './styles'
@@ -17,6 +18,7 @@ import styles from './styles'
 class MapScreen extends Component{
   constructor(props){
     super(props)
+    this.props.getUserInfo()
     this.state = {
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
@@ -27,13 +29,13 @@ class MapScreen extends Component{
     }
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this._getLocationAsync, 500)
+      this.timer = setInterval(this._getLocationAsync, 200)
       this.timer = setInterval(this._postLocationAsync, 2000)
       this.timer = setInterval(this.getFriendsList, 2000)
-      this.timer = setInterval(validateAccessToken, 900000)
+      // this.timer = setInterval(validateAccessToken, 900000)
     }
   }
   componentDidMount(){
@@ -65,6 +67,8 @@ class MapScreen extends Component{
   };
 
   _postLocationAsync = async () =>  {
+    // console.log("User:", this.props.user.email)
+    console.log("Location:", this.state.location)
     if(!_.isEmpty(this.state.location)){
       fetchApi(`api/locator/update/`,payload = {longitude:this.state.location.coords.longitude, latitude:this.state.location.coords.latitude}, method = 'post', headers = {})
       .then(response => {
@@ -89,6 +93,7 @@ class MapScreen extends Component{
 
   render(){
     // Marker of Friends Location.
+    // console.log("Me:", this.props.user.email)
     let mymarker = <View></View>
     if(!_.isEmpty(this.state.location)){
       mymarker  =
@@ -196,15 +201,17 @@ class MapScreen extends Component{
 function mapStateToProps(state){
   return {
     credentials: state.services.session,
+    user: state.services.user.user,
     location: state.data.location,
     friends: state.data.friends.friends
   }
 }
 
-function mapDispatchToProps(dispatch, email="", password="", token="", fbdata=null){
+function mapDispatchToProps(dispatch){
   return{
     postLocation: (coords) => dispatch(postLocationToAPI(coords)),
-    getFriends: () => dispatch(fetchFriendsFromAPI())
+    getFriends: () => dispatch(fetchFriendsFromAPI()),
+    getUserInfo: () => dispatch(getUser())
   }
 }
 

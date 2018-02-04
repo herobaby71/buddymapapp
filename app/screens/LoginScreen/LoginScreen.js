@@ -31,7 +31,7 @@ class LoginScreen extends Component{
 
     if(this.validateEmail(email)){
       this.props.login(email, password)
-      Actions.map()
+      // Actions.map()
     }
     else{
       this.setState({error_message:"Authentication Failed"})

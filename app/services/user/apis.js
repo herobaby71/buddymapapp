@@ -1,11 +1,11 @@
-import { fetchApi } from 'FoodReact/app/services/api'
+import { fetchApi } from '../api'
 import { getUserInfo, getUserInfoSuccess, getUserInfoFailure } from './actions'
 
 export function fetchUserInfoFromAPI(){
-  const queryString = require('query-string');
+  console.log("fetching User")
   return (dispatch) => {
     dispatch(getUserInfo())
-    fetchApi(`api/customer/info/`,payload = {}, method = 'get', headers = {})
+    fetchApi(`api/account/info/`,payload = {}, method = 'get', headers = {})
     .then(response => {
       console.log("GetUSER Response:",response)
       dispatch(getUserInfoSuccess(response))

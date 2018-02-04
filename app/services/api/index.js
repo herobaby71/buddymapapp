@@ -17,6 +17,7 @@ export const exceptionExtractError = (exception) => {
 };
 
 export const fetchApi = (endPoint, payload = {}, method = 'get', headers = {}) => {
+	console.log("Fetch Params:", payload)
   const accessToken = sessionSelectors.get().tokens.access.value
   return fetchival(`${apiConfig.url}${endPoint}`, {
     headers: _.pickBy({
@@ -27,7 +28,7 @@ export const fetchApi = (endPoint, payload = {}, method = 'get', headers = {}) =
 	.catch((error) => {
 		if(error.response.status === 401){
 			console.log("401 Error")
-
+			throw error
 		}
     else if(error.response && error.response.json){
       error.response.json().then((json) => {

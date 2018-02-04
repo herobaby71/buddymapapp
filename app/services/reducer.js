@@ -8,5 +8,5 @@ export default servicesReducer = combineReducers({
   session,
   // facebook,
   persist,
-  // user
+  user
 })

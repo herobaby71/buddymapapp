@@ -1,6 +1,6 @@
 export default {
-  clientId: 'pOFVcM3GbLjwYJl6wAgYMlt3nPrgRHKPJiIcCC35',
-  clientSecret: 'uENzdWiIyzpm0it8pR2RNMn7eMXXu2JpFpNuef9iIAWCTV8KWqsRKxJ2X9SCT9EoJpyQzAVXzwMLeJ5bWx5mRBn2FTEXajK2d4Cncbr9lRcWHptd9f3MzloejtRF9fB0',
+  clientId: 'gBzK0SZJ6tgOOiAR5FST39ZnEwIpr9Ke41Q9V9mK',
+  clientSecret: 'UhY7j5PoU9jCz865BtQZ5T6DtIttrQtcHnedQmjqyQImpDcXAEaJAubsMalgKa5Yo7qC6C6aTatkO75pKOxPoIjiIO8TrlxbbFOz5tjZvLIHmb2W8HQErJPF4XoHPq9t',
   url: 'https://secure-brook-82949.herokuapp.com/'
 }
 
