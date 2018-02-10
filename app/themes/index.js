@@ -1,3 +1,3 @@
 import Constants from './constants'
-
-export {Constants}
+import Colors from './colors'
+export {Colors, Constants}

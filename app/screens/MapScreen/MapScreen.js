@@ -33,8 +33,8 @@ class MapScreen extends Component{
       });
     } else {
       this.timer = setInterval(this._getLocationAsync, 200)
-      this.timer = setInterval(this._postLocationAsync, 2000)
-      this.timer = setInterval(this.getFriendsList, 2000)
+      this.timer = setInterval(this._postLocationAsync, 1000)
+      this.timer = setInterval(this.getFriendsList, 1000)
       // this.timer = setInterval(validateAccessToken, 900000)
     }
   }
@@ -68,7 +68,6 @@ class MapScreen extends Component{
 
   _postLocationAsync = async () =>  {
     // console.log("User:", this.props.user.email)
-    console.log("Location:", this.state.location)
     if(!_.isEmpty(this.state.location)){
       fetchApi(`api/locator/update/`,payload = {longitude:this.state.location.coords.longitude, latitude:this.state.location.coords.latitude}, method = 'post', headers = {})
       .then(response => {
