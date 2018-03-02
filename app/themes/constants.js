@@ -30,8 +30,9 @@ const Constants = {
     Marin15: responsiveWidth(15),
     Marin20: responsiveWidth(20),
     Marin25: responsiveWidth(25),
-    Marin28: responsiveWidth(28), 
+    Marin28: responsiveWidth(28),
     Marin30: responsiveWidth(30),
+    Marin50: responsiveWidth(30),
 
     Harin0: responsiveHeight(0),
     Harin1: responsiveHeight(1),

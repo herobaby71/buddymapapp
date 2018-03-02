@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Text, TouchableOpacity, Platform} from 'react-native';
 import { View } from 'react-native-animatable'
-import { Avatar } from 'react-native-elements'
+import { Avatar, Icon } from 'react-native-elements'
 import { Constants, Location, Permissions} from 'expo';
 import Popover, {PopoverTouchable} from 'react-native-modal-popover'
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
@@ -22,6 +22,8 @@ class MapScreen extends Component{
     this.state = {
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
+      groups: ["Buddies", "GroupA", "GroupB", "GroupC"],
+      currentGroupIndex: 0,
       popoverVisible:false,
       currentFriendVisible:-1,
       location: null,
@@ -86,13 +88,28 @@ class MapScreen extends Component{
   getFriendsList = async () => {
     this.props.getFriends()
   }
+
   showPopover = () => {
     this.setState({popoverVisible:!this.state.popoverVisible})
+  }
+
+  incrementMapLayer = () => {
+    this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.state.groups.length})
+  }
+
+  decrementMapLayer = () => {
+    if(this.state.currentGroupIndex == 0){
+      this.setState({currentGroupIndex: this.state.groups.length-1})
+    }
+    else{
+      this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.state.groups.length})
+    }
   }
 
   render(){
     // Marker of Friends Location.
     // console.log("Me:", this.props.user.email)
+    console.log(this.state.currentGroupIndex)
     let mymarker = <View></View>
     if(!_.isEmpty(this.state.location)){
       mymarker  =
@@ -119,6 +136,7 @@ class MapScreen extends Component{
         </Marker>
       )
     })
+    var currentGroupShow = this.state.groups[this.state.currentGroupIndex]
     return (
       <View style = {{flex:1}} ref="rootRef">
         <MapView
@@ -191,6 +209,17 @@ class MapScreen extends Component{
             <Text style={styles.infoBoxText}>Status Message:</Text>
             <Text style={styles.infoBoxText}>Distance:</Text>
           </View>
+        </View>
+        <View style ={styles.groupSelect}>
+          <TouchableOpacity style={styles.leftChevron} onPress={this.decrementMapLayer}>
+            <Icon name='chevron-left' type='entypo' color = '#696969' />
+          </TouchableOpacity>
+          <View style={styles.groupSelectTextView}>
+            <Text style={styles.groupSelectText}>{currentGroupShow}</Text>
+          </View>
+          <TouchableOpacity style={styles.rightChevron} onPress={this.incrementMapLayer}>
+            <Icon name='chevron-right' type='entypo' color = '#696969' />
+          </TouchableOpacity>
         </View>
       </View>
 

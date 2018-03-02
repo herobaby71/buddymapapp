@@ -54,8 +54,33 @@ export default styles = StyleSheet.create({
   infoBoxText:{
     fontSize: Constants.Font20,
   },
+  groupSelect:{
+    position:'absolute',
+    left: Constants.Marin25,
+    right: Constants.Marin25,
+    bottom: Constants.Harin10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:5,
+    backgroundColor: 'rgba(160,160,160,.6)',
+    flexDirection: 'row',
+  },
+  groupSelectTextView:{
+    margin: 7,
+  },
+  groupSelectText:{
+    fontSize: Constants.Font20,
+  },
+  leftChevron:{
+    position:'absolute',
+    left: Constants.Marin2
+  },
+  rightChevron:{
+    position:'absolute',
+    right: Constants.Marin2
+  },
   popoverBackground:{
-    backgroundColor: 'rgba(0, 0, 0, 0)'
+    backgroundColor: 'rgba(0, 0, 0, 0)',
   },
   popoverContent:{
     borderRadius: 7,
