@@ -35,7 +35,7 @@ class MapScreen extends Component{
       });
     } else {
       this.timer = setInterval(this._getLocationAsync, 200)
-      this.timer = setInterval(this._postLocationAsync, 1000)
+      // this.timer = setInterval(this._postLocationAsync, 1000)
       this.timer = setInterval(this.getFriendsList, 1000)
       // this.timer = setInterval(validateAccessToken, 900000)
     }

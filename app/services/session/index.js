@@ -64,6 +64,8 @@ export function authenticate(email, password){
 		.catch(onRequestFailed)
 	}
 }
+
+
 export const validateAccessToken = () => {
 	credentials = selectors.get();
 	if(!_.isEmpty(credentials.tokens.access.createdAt) && (Date.now() - credentials.tokens.access.createdAt > credentials.tokens.access.expiresIn*1000 - 3600)){
