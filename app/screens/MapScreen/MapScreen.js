@@ -109,7 +109,6 @@ class MapScreen extends Component{
   render(){
     // Marker of Friends Location.
     // console.log("Me:", this.props.user.email)
-    console.log(this.state.currentGroupIndex)
     let mymarker = <View></View>
     if(!_.isEmpty(this.state.location)){
       mymarker  =

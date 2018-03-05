@@ -8,7 +8,7 @@ import Constants from '../../themes/constants'
 // import { BlurView } from 'expo'
 // import { BlurView, VibrancyView } from 'react-native-blur'
 
-import { Actions } from 'react-native-router-flux'; //navigation
+import { Actions, ActionConst } from 'react-native-router-flux'; //navigation
 
 import { connect } from 'react-redux' //Interaction with server
 import { fetchApi } from '../../services/api'
@@ -51,7 +51,7 @@ class LoginScreen extends Component{
         var credentials = sessionSelectors.get()
         console.log("Credentials after initial timeout:",credentials)
         if (!(_.isEmpty(credentials.tokens.access.value))){
-          Actions.map()
+          Actions.map({ type:ActionConst.RESET})
         }
         else{
           console.log("There is an error in the code")
@@ -84,11 +84,7 @@ class LoginScreen extends Component{
 
 
   redirectMap = () => {
-    Actions.map()
-  }
-
-  redirectRegister = () => {
-    Actions.register()
+    Actions.map({ type:'replace' })
   }
 
   redirectFriend = () => {

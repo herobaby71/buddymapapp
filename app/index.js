@@ -44,7 +44,7 @@ class Routes extends Component {
     return (
       <ConnectedRouter hideNavBar={true}>
         <Scene key = "root">
-          <Scene key = "home" component = {Home} hideNavBar={true} {...this.props} />
+          <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
           <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken}/>
           <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken}/>
           <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
