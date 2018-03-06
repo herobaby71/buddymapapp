@@ -4,7 +4,7 @@ import { View } from 'react-native-animatable'
 import Fade  from '../../components/Fade'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Avatar, ButtonGroup } from 'react-native-elements'
-import Constants from '../../themes/constants'
+import {Constants, Images} from '../../themes/'
 // import { BlurView } from 'expo'
 // import { BlurView, VibrancyView } from 'react-native-blur'
 
@@ -22,6 +22,7 @@ class LoginScreen extends Component{
   constructor(props){
     super(props)
     this.state = {
+      isLoading:true,
       email:"",
       password:"",
       buddycode:"",
@@ -33,6 +34,9 @@ class LoginScreen extends Component{
       visibleLogin:true,
       visibleRegister:false,
     }
+    setTimeout(() => {
+      console.log('Prevent Leaking Login!');
+    }, 200);
   }
 
   validateEmail = (email) => {
@@ -56,17 +60,18 @@ class LoginScreen extends Component{
         else{
           console.log("There is an error in the code")
         }
-      }, 1500)
+      }, 1000)
       clearTimeout(this.state.error_message)
     }
     else{
-      this.setState({error_message:"email or password not correct",successAuth:false})
+      this.setState({error_message:"Email or Password is not correct",successAuth:false})
     }
   }
 
   register = () =>{
     var payload = {
       email:this.state.email,
+      email2:this.state.email,
       buddycode:this.state.buddycode,
       password:this.state.password,
       firstName:this.state.firstName,
@@ -119,7 +124,7 @@ class LoginScreen extends Component{
     const {selectedIndex} = this.state
     return(
       <View style={styles.container}>
-        <Image source={{uri:'https://secure-brook-82949.herokuapp.com/media/user/googlemap_sBY2M6m.jpg'}} style={styles.backgroundImage} blurRadius={7}/>
+        <Image source={Images.GoogleMapBackground} style={styles.backgroundImage} blurRadius={7}/>
         <KeyboardAwareScrollView>
           <View style={styles.logoView}>
             <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
@@ -133,7 +138,7 @@ class LoginScreen extends Component{
             />
 
             <Fade visible={this.state.visibleLogin}>
-              <TextInput style={styles.textInput} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
+              <TextInput style={styles.textInput} autoFocus={true} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
               <TextInput style={styles.textInput} onChangeText={(text) => this.setState({password:text})} underlineColorAndroid='rgba(0,0,0,0)' secureTextEntry={true} placeholder='Password' />
               <TouchableOpacity style={styles.signInButton} onPress={this.signIn}>
                 <Text style={styles.signin} >Login to Buddymap</Text>
@@ -141,7 +146,7 @@ class LoginScreen extends Component{
             </Fade>
 
             <Fade visible={this.state.visibleRegister}>
-              <TextInput style={styles.textInput} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
+              <TextInput style={styles.textInput} autoFocus={true} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
               <TextInput style={styles.textInput} onChangeText={(text) => this.setState({password:text})} underlineColorAndroid='rgba(0,0,0,0)' secureTextEntry={true} placeholder='Password' />
               <TextInput style={styles.textInput} onChangeText={(text) => this.setState({buddycode:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='BuddyCode' />
               <View style={styles.nameView}>

@@ -1,3 +1,4 @@
 import Constants from './constants'
 import Colors from './Colors'
-export {Colors, Constants}
+import Images from './Images'
+export {Colors, Constants, Images}
