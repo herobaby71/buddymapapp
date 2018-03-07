@@ -6,7 +6,7 @@ import CustomView from './CustomView';
 import emojiUtils from 'emoji-utils';
 import SlackMessage from './SlackMessage'
 import styles from './styles'
-
+import * as sessionSelectors from '../../services/session/selectors'
 import {WSService} from '../../services/websocket'//websocket call to server
 import autobind from 'autobind-decorator';
 class ChatScreen extends Component{
@@ -22,7 +22,9 @@ class ChatScreen extends Component{
     }
     this._isMounted = false;
     this._isAlright = null;
-    this.websocket = new WebSocket("wss://secure-brook-82949.herokuapp.com/chat/stream/?token=MxOcyQhLfLCZ82BZ5B9dZvYoBoMYNf")
+
+    const accessToken = sessionSelectors.get().tokens.access.value
+    this.websocket = new WebSocket(`wss://secure-brook-82949.herokuapp.com/chat/stream/?token=${accessToken}`)
     this.websocket.onopen = () =>{
       this.websocket.send(JSON.stringify({command:'join', group:this.props.group.id}))
       this.websocket.send(JSON.stringify({command:'history', group:this.props.group.id}))
@@ -57,7 +59,8 @@ class ChatScreen extends Component{
     //     messages: GiftedChat.append(previousState.messages, messages)
     //   }
     // })
-    websocket = new WebSocket("wss://secure-brook-82949.herokuapp.com/chat/stream/?token=MxOcyQhLfLCZ82BZ5B9dZvYoBoMYNf")
+    const accessToken = sessionSelectors.get().tokens.access.value
+    websocket = new WebSocket(`wss://secure-brook-82949.herokuapp.com/chat/stream/?token=${accessToken}`)
     var len= messages.length
     for (var i=0; i<len; i++){
       com = JSON.stringify({command:'send', group:this.props.group.id, message:messages[i].text})
@@ -77,9 +80,8 @@ class ChatScreen extends Component{
           messages: GiftedChat.append(previousState.messages, {
             _id: Math.round(Math.random() * 1000000),
             text: data.message,
-            createdAt: new Date(),
             user: {
-              _id: 2,
+              _id: data.user_id,
               name: data.buddycode,
             },
           }),
@@ -198,14 +200,14 @@ class ChatScreen extends Component{
           _id:1
         }}
 
-        renderActions={this.renderCustomActions}
         renderMessage={this.renderMessage}
+        renderActions={this.renderCustomActions}
         renderSystemMessage={this.renderSystemMessage}
-        renderCustomView={this.renderCustomView}
         renderFooter={this.renderFooter}
       />
     )
   }
 }
-
+// renderCustomView={this.renderCustomView}
+// renderBubble = {this.renderBubble}
 export default ChatScreen
