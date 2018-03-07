@@ -1,7 +1,7 @@
 import {UPDATE, UPDATING} from './constants'
 
 export const initialState = {
-  isFetching:false,
+  isFetching:true,
   tokens:{
     access:{
       type:null,

@@ -35,7 +35,7 @@ class LoginScreen extends Component{
       visibleRegister:false,
     }
     setTimeout(() => {
-      console.log('Prevent Leaking Login!');
+      // console.log('Prevent Leaking Login!');
     }, 200);
   }
 
@@ -50,7 +50,6 @@ class LoginScreen extends Component{
     var error_msg = ""
     if(this.validateEmail(email)){
       this.props.login(email, password)
-      console.log("Credentials:",this.props.credentials)
       setTimeout(()=> {
         var credentials = sessionSelectors.get()
         console.log("Credentials after initial timeout:",credentials)
@@ -62,6 +61,7 @@ class LoginScreen extends Component{
         }
       }, 1000)
       clearTimeout(this.state.error_message)
+
     }
     else{
       this.setState({error_message:"Email or Password is not correct",successAuth:false})
@@ -122,6 +122,8 @@ class LoginScreen extends Component{
     const selected_view = [{element: this.loginView}, {element: this.registerView}]
     const buttons = ['LOGIN', 'REGISTER']
     const {selectedIndex} = this.state
+    const {credetials} = this.props
+
     return(
       <View style={styles.container}>
         <Image source={Images.GoogleMapBackground} style={styles.backgroundImage} blurRadius={7}/>

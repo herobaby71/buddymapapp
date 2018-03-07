@@ -8,6 +8,8 @@ import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
 import LoginScreen from './screens/LoginScreen'
 import FriendScreen from './screens/FriendScreen'
+import ChatScreen from './screens/ChatScreen'
+import GroupScreen from './screens/GroupScreen'
 import _ from 'lodash'
 
 const ConnectedRouter = connect()(Router)
@@ -23,13 +25,12 @@ class Routes extends Component {
     }
     else{
       credentials = this.props.credentials
-      console.log("Difference in Time:", Date.now() - credentials.tokens.access.createdAt)
-      console.log("Margin of Reset:", Number(credentials.tokens.access.expiresIn)*1000 - 7200)
+      // console.log("Difference in Time:", Date.now() - credentials.tokens.access.createdAt)
+      // console.log("Margin of Reset:", Number(credentials.tokens.access.expiresIn)*1000 - 7200)
       if(Date.now() - credentials.tokens.access.createdAt > Number(credentials.tokens.access.expiresIn)*1000 - 7200){
-        console.log("Fresher than the Freshiest")
+        // console.log("Fresher than the Freshiest")
         refreshToken()
       }
-      getUserInfo()
       this.setState({isLoaded:true, hasToken:true})
 
     }
@@ -47,6 +48,8 @@ class Routes extends Component {
           <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
           <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken}/>
           <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken}/>
+          <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props}/>
+          <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props}/>
           <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
         </Scene>
       </ConnectedRouter>

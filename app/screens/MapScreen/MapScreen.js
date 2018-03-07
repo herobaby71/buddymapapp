@@ -5,9 +5,13 @@ import { Avatar, Icon } from 'react-native-elements'
 import { Constants, Location, Permissions} from 'expo';
 import Popover, {PopoverTouchable} from 'react-native-modal-popover'
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
+import { Actions} from 'react-native-router-flux'; //navigation
+
+//Communication with the server
 import { connect } from 'react-redux'
 import { postLocationToAPI } from '../../data/location/apis'
 import { fetchFriendsFromAPI } from '../../data/friends/apis'
+import { fetchGroupsFromAPI } from '../../data/groups/apis'
 import { fetchApi } from '../../services/api'
 import { validateAccessToken } from '../../services/session'
 import { getUser } from '../../services/user'
@@ -18,11 +22,9 @@ import styles from './styles'
 class MapScreen extends Component{
   constructor(props){
     super(props)
-    this.props.getUserInfo()
     this.state = {
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
-      groups: ["Buddies", "GroupA", "GroupB", "GroupC"],
       currentGroupIndex: 0,
       popoverVisible:false,
       currentFriendVisible:-1,
@@ -36,9 +38,11 @@ class MapScreen extends Component{
     } else {
       this.timer = setInterval(this._getLocationAsync, 200)
       // this.timer = setInterval(this._postLocationAsync, 1000)
-      this.timer = setInterval(this.getFriendsList, 1000)
+      // this.timer = setInterval(this.getFriendsList, 1000)
       // this.timer = setInterval(validateAccessToken, 900000)
     }
+    this.props.getUserInfo()
+    this.props.getGroups()
   }
   componentDidMount(){
     navigator.geolocation.getCurrentPosition(location => {
@@ -94,16 +98,20 @@ class MapScreen extends Component{
   }
 
   incrementMapLayer = () => {
-    this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.state.groups.length})
+    this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.props.groups.groups.length})
   }
 
   decrementMapLayer = () => {
     if(this.state.currentGroupIndex == 0){
-      this.setState({currentGroupIndex: this.state.groups.length-1})
+      this.setState({currentGroupIndex: this.props.groups.groups.length-1})
     }
     else{
-      this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.state.groups.length})
+      this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.props.groups.groups.length})
     }
+  }
+
+  goToChat = () =>{
+    Actions.chat({group:this.props.groups.groups[this.state.currentGroupIndex]})
   }
 
   render(){
@@ -135,7 +143,13 @@ class MapScreen extends Component{
         </Marker>
       )
     })
-    var currentGroupShow = this.state.groups[this.state.currentGroupIndex]
+    var currentGroupShow = ['Loading...']//[{id:-1,name:'Loading'}]
+    if(!this.props.groups.isFetching){
+      let groups = this.props.groups.groups
+      currentGroupShow = groups.map(group => {
+        return group.name
+      })
+    }
     return (
       <View style = {{flex:1}} ref="rootRef">
         <MapView
@@ -214,7 +228,9 @@ class MapScreen extends Component{
             <Icon name='chevron-left' type='entypo' color = '#696969' />
           </TouchableOpacity>
           <View style={styles.groupSelectTextView}>
-            <Text style={styles.groupSelectText}>{currentGroupShow}</Text>
+            <TouchableOpacity onPress={this.goToChat}>
+              <Text style={styles.groupSelectText}>{currentGroupShow}</Text>
+            </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.rightChevron} onPress={this.incrementMapLayer}>
             <Icon name='chevron-right' type='entypo' color = '#696969' />
@@ -227,10 +243,10 @@ class MapScreen extends Component{
 }
 function mapStateToProps(state){
   return {
-    credentials: state.services.session,
     user: state.services.user.user,
     location: state.data.location,
-    friends: state.data.friends.friends
+    friends: state.data.friends.friends,
+    groups: state.data.groups,
   }
 }
 
@@ -238,6 +254,7 @@ function mapDispatchToProps(dispatch){
   return{
     postLocation: (coords) => dispatch(postLocationToAPI(coords)),
     getFriends: () => dispatch(fetchFriendsFromAPI()),
+    getGroups: () => dispatch(fetchGroupsFromAPI()),
     getUserInfo: () => dispatch(getUser())
   }
 }
