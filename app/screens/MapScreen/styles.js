@@ -13,6 +13,9 @@ export default styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
   },
+
+
+  //Avatar Styling
   avatarView:{
     position:'absolute',
     top: Constants.Harin3,
@@ -40,20 +43,15 @@ export default styles = StyleSheet.create({
   textPopoverView:{
     position:'absolute',
   },
-  infoBox:{
-    position:'absolute',
-    top: Constants.Harin3,
-    right: Constants.Marin3,
-    borderRadius:5,
-    alignItems:'center',
-    backgroundColor: 'rgba(160,160,160,.6)'
+  popoverBackground:{
+    backgroundColor: 'rgba(0, 0, 0, 0)',
   },
-  infoBoxTextView:{
-    margin: 5,
+  popoverContent:{
+    borderRadius: 7,
   },
-  infoBoxText:{
-    fontSize: Constants.Font20,
-  },
+
+
+  //Groups(Map) Overlay Styling
   groupSwiperContainer:{
     position:'absolute',
     backgroundColor: 'rgba(160,160,160,.6)',
@@ -65,21 +63,6 @@ export default styles = StyleSheet.create({
   },
   groupSwiper:{
     position:'relative',
-  },
-  groupSelect:{
-    position:'absolute',
-    // left: Constants.Marin25,
-    // right: Constants.Marin25,
-    // bottom: Constants.Harin10,
-    left:  0,
-    right: 0,
-    bottom:0,
-    paddingVertical: Constants.Harin4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius:5,
-    backgroundColor: 'rgba(160,160,160,.6)',
-    flexDirection: 'row',
   },
   groupSelectTextView:{
     margin: 7,
@@ -97,10 +80,36 @@ export default styles = StyleSheet.create({
     position:'absolute',
     right: Constants.Marin2
   },
-  popoverBackground:{
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+
+  //infoBox Styling
+  infoBox:{
+    position:'absolute',
+    top: Constants.Harin3,
+    right: Constants.Marin3,
+    borderRadius:5,
+    alignItems:'center',
+    backgroundColor: 'rgba(160,160,160,.6)'
   },
-  popoverContent:{
-    borderRadius: 7,
+  infoBoxTextView:{
+    margin: 5,
+  },
+  infoBoxText:{
+    fontSize: Constants.Font20,
+  },
+
+  //Utility Styling (Adding Group/ Events/ etc.)
+  utilityContainer:{
+    position:'absolute',
+    right: Constants.Marin3,
+    bottom: Constants.Harin8,
+    alignItems:'center',
+  },
+  utilityPlusButton:{
+  },
+  groupAddButton:{
+  },
+  groupEventPlusButton:{
+  },
+  radiusEventPlusButton:{
   }
 });

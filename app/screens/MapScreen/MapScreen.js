@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 import { Text, TouchableOpacity, Platform} from 'react-native';
+import ChatScreen from '../ChatScreen'
 import Swiper from 'react-native-swiper'
 import { View } from 'react-native-animatable'
 import { Actions} from 'react-native-router-flux'; //navigation
 import { Avatar, Icon } from 'react-native-elements'
-import Popover, {PopoverTouchable} from 'react-native-modal-popover'
+import CreateGroupModal from '../../components/CreateGroupModal'
+import CreateGroupEventModal from '../../components/CreateGroupEventModal'
+import CreateRadiusEventModal from '../../components/CreateRadiusEventModal'
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
-import ChatScreen from '../ChatScreen'
+import Popover, {PopoverTouchable} from 'react-native-modal-popover'
 import { Constants, Location, Permissions} from 'expo';
 
 //Communication with the server
@@ -29,13 +32,21 @@ class MapScreen extends Component{
       groups:['Loading...'],
       groupsLoaded:false,
 
+      //for status on the avatar and animation
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
-      currentGroupIndex: 0,
       popoverVisible:false,
       currentFriendVisible:-1,
+
+      //for google map
       location: null,
-      regionSet:false
+      regionSet:false,
+
+      //for utility modals
+      modalVisible:null,
+      modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal'},
+      //For map (group) overlay
+      currentGroupIndex: 0,
     }
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
@@ -164,7 +175,6 @@ class MapScreen extends Component{
     })
 
     //Groups for Group Swiper that shows groups at the bottom
-
     const groups= this.state.groups.map((group, key) => {
       return (
         <View key={key} style={styles.groupSelectTextView}>
@@ -242,13 +252,47 @@ class MapScreen extends Component{
             </View>
           </View>
         }
-
         <View style ={styles.infoBox}>
           <View style={styles.infoBoxTextView}>
             <Text style={styles.infoBoxText}>Status Message:</Text>
             <Text style={styles.infoBoxText}>Distance:</Text>
           </View>
         </View>
+
+        <View style = {styles.utilityContainer}>
+          <TouchableOpacity style = {styles.groupPlusButton} onPress = {() => {this.setState({modalVisible: 1})}}>
+            <Icon raised
+              name = 'account-multiple-plus'
+              type = 'material-community'
+              color= 'gray'
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style = {styles.radiusEventPlusButton} onPress = {() => {this.setState({modalVisible: 2})}} >
+            <Icon raised
+              name = 'map-marker-plus'
+              type = 'material-community'
+              color= 'gray'
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style = {styles.groupEventPlusButton} onPress = {() => {this.setState({modalVisible: 3})}}>
+            <Icon raised
+              name = 'calendar-plus'
+              type = 'material-community'
+              color= 'gray'
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style = {styles.utilityPlusButton} onPress = {() => {}}>
+            <Icon raised
+              name = 'plus-circle'
+              type = 'material-community'
+              color= 'gray'
+            />
+          </TouchableOpacity>
+        </View>
+
+        <CreateGroupModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
+        <CreateRadiusEventModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
+        <CreateGroupEventModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3} />
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
