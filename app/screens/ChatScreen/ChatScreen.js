@@ -21,7 +21,7 @@ class ChatScreen extends Component{
       messages:[],
       messageType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'}, //Type of messages the server send
       loadEarlier:false, //load earlier messages (when user scroll up) if true
-      online:['currently online: '],
+      online:[],
       isLoadingEarlier:false,
     }
 

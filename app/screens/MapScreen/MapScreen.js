@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import { Text, TouchableOpacity, Platform} from 'react-native';
+import Swiper from 'react-native-swiper'
 import { View } from 'react-native-animatable'
+import { Actions} from 'react-native-router-flux'; //navigation
 import { Avatar, Icon } from 'react-native-elements'
-import { Constants, Location, Permissions} from 'expo';
 import Popover, {PopoverTouchable} from 'react-native-modal-popover'
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
-import { Actions} from 'react-native-router-flux'; //navigation
+import ChatScreen from '../ChatScreen'
+import { Constants, Location, Permissions} from 'expo';
 
 //Communication with the server
 import { connect } from 'react-redux'
@@ -23,6 +25,10 @@ class MapScreen extends Component{
   constructor(props){
     super(props)
     this.state = {
+      //for Swiper Compoenent (does not register unless the )
+      groups:['Loading...'],
+      groupsLoaded:false,
+
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
       popoverAnimation:"bounceIn",
       currentGroupIndex: 0,
@@ -44,7 +50,18 @@ class MapScreen extends Component{
     this.props.getUserInfo()
     this.props.getGroups()
   }
+  componentWillReceiveProps(nextProps) {
+    //Once group fetching is finished, update the local state
+    if(!nextProps.groups.isFetching){
+      let groups = nextProps.groups.groups
+      var currentGroupList = groups.map(group => {
+        return group.name
+      })
+      this.setState({groups: currentGroupList, groupsLoaded:true})
+    }
+  }
   componentDidMount(){
+    this.swiper.scrollBy(0);
     navigator.geolocation.getCurrentPosition(location => {
         const { latitude, longitude } = location.coords
         const region = {
@@ -127,6 +144,8 @@ class MapScreen extends Component{
         />
     }
     let friends = this.props.friends
+
+    //Create a Marker for every friends
     let markers = friends.map(friend => {
       return (
         <Marker
@@ -143,13 +162,18 @@ class MapScreen extends Component{
         </Marker>
       )
     })
-    var currentGroupShow = ['Loading...']//[{id:-1,name:'Loading'}]
-    if(!this.props.groups.isFetching){
-      let groups = this.props.groups.groups
-      currentGroupShow = groups.map(group => {
-        return group.name
-      })
-    }
+
+    //Groups for Group Swiper that shows groups at the bottom
+    const groups= this.state.groups.map((group, key) => {
+      return (
+        <View key={key} style={styles.groupSelectTextView}>
+            <TouchableOpacity onPress={this.goToChat}>
+              <Text style={styles.groupSelectText}>{group}</Text>
+            </TouchableOpacity>
+        </View>
+      )
+    })
+
     return (
       <View style = {{flex:1}} ref="rootRef">
         <MapView
@@ -217,30 +241,38 @@ class MapScreen extends Component{
             </View>
           </View>
         }
+
         <View style ={styles.infoBox}>
           <View style={styles.infoBoxTextView}>
             <Text style={styles.infoBoxText}>Status Message:</Text>
             <Text style={styles.infoBoxText}>Distance:</Text>
           </View>
         </View>
-        <View style ={styles.groupSelect}>
-          <TouchableOpacity style={styles.leftChevron} onPress={this.decrementMapLayer}>
-            <Icon name='chevron-left' type='entypo' color = '#696969' />
-          </TouchableOpacity>
-          <View style={styles.groupSelectTextView}>
-            <TouchableOpacity onPress={this.goToChat}>
-              <Text style={styles.groupSelectText}>{currentGroupShow}</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={styles.rightChevron} onPress={this.incrementMapLayer}>
-            <Icon name='chevron-right' type='entypo' color = '#696969' />
-          </TouchableOpacity>
-        </View>
-      </View>
 
+        <View style ={styles.groupSwiperContainer}>
+          <Swiper
+            key = {this.state.groups.length}
+            style ={styles.groupSwiper}
+            height = {25}
+            loop = {false}
+            showsButtons = {false}
+            showsPagination= {false}
+            ref={(s: React.Element<Swiper>) => this.swiper = s}
+            onMomentumScrollEnd={(e, state) => {
+              this.setState({currentGroupIndex:state.index})
+            }}
+          >
+            {groups}
+          </Swiper>
+        </View>
+
+      </View>
     );
   }
 }
+
+
+
 function mapStateToProps(state){
   return {
     user: state.services.user.user,

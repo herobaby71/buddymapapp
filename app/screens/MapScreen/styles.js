@@ -54,6 +54,18 @@ export default styles = StyleSheet.create({
   infoBoxText:{
     fontSize: Constants.Font20,
   },
+  groupSwiperContainer:{
+    position:'absolute',
+    backgroundColor: 'rgba(160,160,160,.6)',
+    paddingVertical: Constants.Harin2,
+    borderRadius:5,
+    left:  0,
+    right: 0,
+    bottom:0,
+  },
+  groupSwiper:{
+    position:'relative',
+  },
   groupSelect:{
     position:'absolute',
     // left: Constants.Marin25,
@@ -62,7 +74,7 @@ export default styles = StyleSheet.create({
     left:  0,
     right: 0,
     bottom:0,
-    paddingVertical: Constants.Harin1,
+    paddingVertical: Constants.Harin4,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:5,
@@ -71,9 +83,11 @@ export default styles = StyleSheet.create({
   },
   groupSelectTextView:{
     margin: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   groupSelectText:{
-    fontSize: Constants.Font25,
+    fontSize: Constants.Font22,
   },
   leftChevron:{
     position:'absolute',
