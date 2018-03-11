@@ -114,18 +114,18 @@ class MapScreen extends Component{
     this.setState({popoverVisible:!this.state.popoverVisible})
   }
 
-  incrementMapLayer = () => {
-    this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.props.groups.groups.length})
-  }
-
-  decrementMapLayer = () => {
-    if(this.state.currentGroupIndex == 0){
-      this.setState({currentGroupIndex: this.props.groups.groups.length-1})
-    }
-    else{
-      this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.props.groups.groups.length})
-    }
-  }
+  // incrementMapLayer = () => {
+  //   this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.props.groups.groups.length})
+  // }
+  //
+  // decrementMapLayer = () => {
+  //   if(this.state.currentGroupIndex == 0){
+  //     this.setState({currentGroupIndex: this.props.groups.groups.length-1})
+  //   }
+  //   else{
+  //     this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.props.groups.groups.length})
+  //   }
+  // }
 
   goToChat = () =>{
     Actions.chat({group:this.props.groups.groups[this.state.currentGroupIndex]})
@@ -164,12 +164,13 @@ class MapScreen extends Component{
     })
 
     //Groups for Group Swiper that shows groups at the bottom
+
     const groups= this.state.groups.map((group, key) => {
       return (
         <View key={key} style={styles.groupSelectTextView}>
-            <TouchableOpacity onPress={this.goToChat}>
-              <Text style={styles.groupSelectText}>{group}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={this.goToChat}>
+            <Text style={styles.groupSelectText}>{group}</Text>
+          </TouchableOpacity>
         </View>
       )
     })
@@ -252,11 +253,14 @@ class MapScreen extends Component{
         <View style ={styles.groupSwiperContainer}>
           <Swiper
             key = {this.state.groups.length}
+            ref='swiper'
             style ={styles.groupSwiper}
             height = {25}
             loop = {false}
-            showsButtons = {false}
             showsPagination= {false}
+            showsButtons = {true}
+            nextButton = {<Icon name='chevron-right' type='entypo' color = '#696969' />}
+            prevButton = {<Icon name='chevron-left' type='entypo' color = '#696969' />}
             ref={(s: React.Element<Swiper>) => this.swiper = s}
             onMomentumScrollEnd={(e, state) => {
               this.setState({currentGroupIndex:state.index})

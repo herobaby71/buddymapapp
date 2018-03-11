@@ -220,6 +220,7 @@ class ChatScreen extends Component{
     return (
       <GiftedChat
         messages = {this.state.messages}
+        loop={true}
         onSend = {this.onSend}
         loadEarlier = {this.state.loadEarlier}
         onLoadEarlier={this.state.onLoadEarlier}
