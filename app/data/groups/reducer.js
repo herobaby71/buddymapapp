@@ -3,6 +3,7 @@ import { FETCHING, SUCCESS, FAILURE } from './constants'
 const initialState = {
   groups: [],
   isFetching: true,
+  currentGroupIndex:0,
   page: 1,
   seed: 1,
   refreshing: false,

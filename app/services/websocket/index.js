@@ -31,3 +31,8 @@ export class WSService{
     console.log("closing socket")
   }
 }
+
+export function getWebSocket(endPoint){
+  const accessToken = sessionSelectors.get().tokens.access.value
+  return new WebSocket(`${wsConfig.url}${endPoint}?token=${accessToken}`)
+}

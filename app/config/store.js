@@ -12,8 +12,8 @@ import * as persistActionCreators from '../services/persist/actions';
 // AsyncStorage.clear()
 const saveAndLoadSessionFilter = createFilter(
 	'services',
-	['session'],
-	['session']
+	['session', 'messages'],
+	['session', 'messages']
 );
 
 const rootPersistConfig =  {

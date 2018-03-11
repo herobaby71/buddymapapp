@@ -43,7 +43,7 @@ export default styles = StyleSheet.create({
     marginRight:Constants.Marin5,
 
     borderWidth:1,
-    borderRadius:7,
+    borderRadius:3,
     paddingLeft:Constants.Harin3,
     // shadowOffset:{  width: 1,  height: 2,  },
     // shadowColor: 'black',

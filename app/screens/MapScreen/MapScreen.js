@@ -244,6 +244,8 @@ class MapScreen extends Component{
 function mapStateToProps(state){
   return {
     user: state.services.user.user,
+    latest_group_id:state.services.messages.group_id,
+    messages: state.services.messages.messages,
     location: state.data.location,
     friends: state.data.friends.friends,
     groups: state.data.groups,

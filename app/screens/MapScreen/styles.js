@@ -56,9 +56,13 @@ export default styles = StyleSheet.create({
   },
   groupSelect:{
     position:'absolute',
-    left: Constants.Marin25,
-    right: Constants.Marin25,
-    bottom: Constants.Harin10,
+    // left: Constants.Marin25,
+    // right: Constants.Marin25,
+    // bottom: Constants.Harin10,
+    left:  0,
+    right: 0,
+    bottom:0,
+    paddingVertical: Constants.Harin1,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:5,
@@ -69,7 +73,7 @@ export default styles = StyleSheet.create({
     margin: 7,
   },
   groupSelectText:{
-    fontSize: Constants.Font20,
+    fontSize: Constants.Font25,
   },
   leftChevron:{
     position:'absolute',

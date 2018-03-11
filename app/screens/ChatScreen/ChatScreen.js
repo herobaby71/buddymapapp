@@ -7,46 +7,50 @@ import emojiUtils from 'emoji-utils';
 import SlackMessage from './SlackMessage'
 import styles from './styles'
 import * as sessionSelectors from '../../services/session/selectors'
-import {WSService} from '../../services/websocket'//websocket call to server
+import {WSService, getWebSocket} from '../../services/websocket'//websocket call to server
 import autobind from 'autobind-decorator';
+
+import { connect } from 'react-redux'
+import { update } from '../../services/messages/apis'
+import _ from 'lodash'
 class ChatScreen extends Component{
 
   constructor(props){
     super(props)
     this.state = {
-      messages: [],
-      messageType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'},
-      loadEarlier:false,
-      typingText:null,
+      messages:[],
+      messageType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'}, //Type of messages the server send
+      loadEarlier:false, //load earlier messages (when user scroll up) if true
+      online:['currently online: '],
       isLoadingEarlier:false,
     }
+
     this._isMounted = false;
     this._isAlright = null;
+    this.websocket = getWebSocket('chat/stream/')
 
-    const accessToken = sessionSelectors.get().tokens.access.value
-    this.websocket = new WebSocket(`wss://secure-brook-82949.herokuapp.com/chat/stream/?token=${accessToken}`)
     this.websocket.onopen = () =>{
       this.websocket.send(JSON.stringify({command:'join', group:this.props.group.id}))
-      this.websocket.send(JSON.stringify({command:'history', group:this.props.group.id}))
     }
-    this.websocket.onmessage = this.onReceive
-    // this.ws = new WSService('chat/stream/')
-    // this.ws.ws.onopen = () =>{
-    //   this.ws.send(JSON.stringify({command:'join', group:this.props.group.id}))
-    //   this.ws.send(JSON.stringify({command:'send', group:this.props.group.id, message: "last test"}))
-    // }
-    // // this.ws.send({command:'join', group:this.props.group.id})
-    // this.ws.send({command:'history', group:this.props.group.id})
-    // this.ws.ws.onmessage = this.onReceive
+    //First time user opens the group chat
+    //initialize with empty array and get message history for this specific group chat
+    if(_.isEmpty(this.props.messages[this.props.group.id])){
+      console.log("Message history is empty")
+      this.props.updateMessages([],this.props.group.id)
+      this.websocket.onopen = () =>{
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.group.id}))
+        this.websocket.send(JSON.stringify({command:'history', group:this.props.group.id}))
+      }
+    }
+
+    this.websocket.onmessage = this.onReceive //handle JSON recieves from the websocket server
   }
 
   componentWillMount() {
     this._isMounted = true;
-    this.setState(() => {
-      return {
-        messages: [] //mount old messages here or anything
-      };
-    });
+    setTimeout(() =>{
+      this.setState({messages:this.props.messages[this.props.group.id]});
+    }, 50)
   }
 
   componentWillUnmount() {
@@ -54,16 +58,11 @@ class ChatScreen extends Component{
   }
 
   onSend = (messages=[]) =>{
-    // this.setState((previousState) =>{
-    //   return{
-    //     messages: GiftedChat.append(previousState.messages, messages)
-    //   }
-    // })
-    const accessToken = sessionSelectors.get().tokens.access.value
-    websocket = new WebSocket(`wss://secure-brook-82949.herokuapp.com/chat/stream/?token=${accessToken}`)
+    websocket = getWebSocket('chat/stream/')
     var len= messages.length
     for (var i=0; i<len; i++){
       com = JSON.stringify({command:'send', group:this.props.group.id, message:messages[i].text})
+      console.log("send ",com)
       websocket.onopen = () =>{
         websocket.send(JSON.stringify({command:'join', group:this.props.group.id}))
         websocket.send(com)
@@ -87,6 +86,33 @@ class ChatScreen extends Component{
           }),
         };
       });
+      setTimeout(() => {this.props.updateMessages(
+        this.state.messages,
+        this.props.group.id
+      )}, 100)
+    }
+    else if(this.state.messageType[data.msg_type] == 'JOIN' && !this.state.online.includes(data.buddycode)){
+      console.log("user joined the chat:",data.buddycode)
+      this.setState((previousState) =>{
+        var joined = previousState.online
+        joined.push(data.buddycode)
+        return{
+          online: joined
+        }
+      })
+    }
+    else if(this.state.messageType[data.msg_type] == 'LEAVE' && this.state.online.includes(data.buddycode)){
+      console.log("user leaved the chat:",data.buddycode)
+      this.setState((previousState) =>{
+        var joined = previousState.online
+        var index = joined.indexOf(data.buddycode)
+        if(index > -1){
+          joined.splice(index, 1)
+        }
+        return{
+          online: joined
+        }
+      })
     }
   }
 
@@ -150,16 +176,19 @@ class ChatScreen extends Component{
   }
 
   renderFooter = () => {
-    if (this.state.typingText) {
-      return (
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>
-            {this.state.typingText}
-          </Text>
-        </View>
-      );
+    let i = 0
+    var online = this.state.online
+    var onlineText = ''
+    for(i=0;i<online.length;i++){
+      onlineText+=online[i]+' '
     }
-    return null;
+    return (
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>
+          {onlineText}
+        </Text>
+      </View>
+    );
   }
 
   renderCustomActions = () => {
@@ -202,12 +231,27 @@ class ChatScreen extends Component{
 
         renderMessage={this.renderMessage}
         renderActions={this.renderCustomActions}
+        renderCustomView={this.renderCustomView}
         renderSystemMessage={this.renderSystemMessage}
         renderFooter={this.renderFooter}
+
       />
     )
   }
 }
-// renderCustomView={this.renderCustomView}
 // renderBubble = {this.renderBubble}
-export default ChatScreen
+function mapStateToProps(state){
+  return {
+    latest_group_id:state.services.messages.group_id,
+    messages: state.services.messages.messages,
+    groups: state.data.groups,
+  }
+}
+
+function mapDispatchToProps(dispatch){
+  return{
+    updateMessages: (messages, group_id) => dispatch(update(messages, group_id)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen)
