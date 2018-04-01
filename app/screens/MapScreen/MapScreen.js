@@ -5,6 +5,7 @@ import Swiper from 'react-native-swiper'
 import { View } from 'react-native-animatable'
 import { Actions} from 'react-native-router-flux'; //navigation
 import { Avatar, Icon } from 'react-native-elements'
+import Modal from 'react-native-modal'
 import CreateGroupModal from '../../components/CreateGroupModal'
 import CreateGroupEventModal from '../../components/CreateGroupEventModal'
 import CreateRadiusEventModal from '../../components/CreateRadiusEventModal'
@@ -154,9 +155,9 @@ class MapScreen extends Component{
           description= "Mushi Mush"
         />
     }
-    let friends = this.props.friends
 
     //Create a Marker for every friends
+    let friends = this.props.friends
     let markers = friends.map(friend => {
       return (
         <Marker
@@ -193,14 +194,14 @@ class MapScreen extends Component{
           style= {{flex:1}}
           onMapReady={() => {
             this.setState({ regionSet: true });
-          }}
-        >
+          }}>
           {mymarker}
           {markers}
         </MapView>
         <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
            <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
         </TouchableOpacity>
+
         { this.state.popoverVisible &&
           <View animation="bounceIn" style={styles.bubbleView1}>
             <View style={styles.bubbleView3}>
@@ -252,6 +253,7 @@ class MapScreen extends Component{
             </View>
           </View>
         }
+
         <View style ={styles.infoBox}>
           <View style={styles.infoBoxTextView}>
             <Text style={styles.infoBoxText}>Status Message:</Text>
@@ -281,7 +283,7 @@ class MapScreen extends Component{
               color= 'gray'
             />
           </TouchableOpacity>
-          <TouchableOpacity style = {styles.utilityPlusButton} onPress = {() => {}}>
+          <TouchableOpacity style = {styles.utilityPlusButton} onPress = {() => {this.setState({modalVisible: 4})}}>
             <Icon raised
               name = 'plus-circle'
               type = 'material-community'
@@ -290,9 +292,9 @@ class MapScreen extends Component{
           </TouchableOpacity>
         </View>
 
-        <CreateGroupModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
-        <CreateRadiusEventModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
-        <CreateGroupEventModal hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3} />
+        <CreateGroupModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
+        <CreateRadiusEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
+        <CreateGroupEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3} />
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
@@ -308,8 +310,7 @@ class MapScreen extends Component{
             ref={(s: React.Element<Swiper>) => this.swiper = s}
             onMomentumScrollEnd={(e, state) => {
               this.setState({currentGroupIndex:state.index})
-            }}
-          >
+            }}>
             {groups}
           </Swiper>
         </View>

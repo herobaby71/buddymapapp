@@ -9,7 +9,7 @@ import data from '../data/reducer';
 import services from '../services/reducer';
 import * as persistActionCreators from '../services/persist/actions';
 
-// AsyncStorage.clear()
+AsyncStorage.clear()
 const saveAndLoadSessionFilter = createFilter(
 	'services',
 	['session', 'messages'],

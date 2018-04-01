@@ -1,6 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { Constants } from '../../themes/';
 export default styles = StyleSheet.create({
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+
   container: {
     flex: 1,
     alignItems: 'center',

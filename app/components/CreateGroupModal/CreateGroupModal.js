@@ -9,26 +9,31 @@ class CreateGroupModal extends Component{
       modalVisible: false
     }
   }
+
   componentWillReceiveProps(newProps) {
     //Handle props
     this.setState({modalVisible: newProps.modalVisible})
   }
+
   _renderModalContent = () => (
-    <View style = {styles.modalContent}>
+    <View style = {this.props.containerStyle}>
       <Text>Create Group Modal</Text>
       <TouchableOpacity onPress = {this.props.hideModal}>
         <Text>Hide Modal</Text>
       </TouchableOpacity>
     </View>
   );
+
   render(){
     return(
       <Modal
         isVisible={this.state.modalVisible}
         onBackdropPress={this.props.hideModal}
         backdropOpacity={.2}
-        animationIn="slideInLeft"
-        animationOut="slideOutRight"
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        onSwipe = {this.props.hideModal}
+        swipeDirection="left"
         onRequestClose={() =>{
           console.log("Modal Create Radius Event Close")
         }}
@@ -37,7 +42,6 @@ class CreateGroupModal extends Component{
       </Modal>
     )
   }
-
 }
 
 
