@@ -110,6 +110,12 @@ export default styles = StyleSheet.create({
   utilityContainer:{
     position:'absolute',
     right: Constants.Marin3,
+    bottom: Constants.Harin19,
+    alignItems:'center',
+  },
+  utilityPopUp:{
+    position:'absolute',
+    right: Constants.Marin3,
     bottom: Constants.Harin8,
     alignItems:'center',
   },

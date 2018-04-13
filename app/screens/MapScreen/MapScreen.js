@@ -39,6 +39,9 @@ class MapScreen extends Component{
       popoverVisible:false,
       currentFriendVisible:-1,
 
+      //for utility bar
+      utilityPopUp: false,
+
       //for google map
       location: null,
       regionSet:false,
@@ -261,7 +264,7 @@ class MapScreen extends Component{
           </View>
         </View>
 
-        <View style = {styles.utilityContainer}>
+        {this.state.utilityPopUp && <View  animation="bounceIn" style = {styles.utilityContainer}>
           <TouchableOpacity style = {styles.groupPlusButton} onPress = {() => {this.setState({modalVisible: 1})}}>
             <Icon raised
               name = 'account-multiple-plus'
@@ -283,7 +286,9 @@ class MapScreen extends Component{
               color= 'gray'
             />
           </TouchableOpacity>
-          <TouchableOpacity style = {styles.utilityPlusButton} onPress = {() => {this.setState({modalVisible: 4})}}>
+        </View>}
+        <View style = {styles.utilityPopUp}>
+          <TouchableOpacity style = {styles.utilityPlusButton} onPress = {() => {this.setState({utilityPopUp: !this.state.utilityPopUp})}}>
             <Icon raised
               name = 'plus-circle'
               type = 'material-community'
