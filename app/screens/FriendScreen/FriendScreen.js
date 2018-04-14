@@ -19,6 +19,7 @@ class FriendScreen extends Component{
       friendRequestNotificationVisible:false
     }
 
+    this.props.getFriendRequests()
     // if(!_.isEmpty(this.props.credentials.tokens.access.value)){
     //   Actions.map()
     // }
@@ -119,7 +120,7 @@ class FriendScreen extends Component{
         </TouchableOpacity>
       )
     })
-    text4 = JSON.stringify(this.props.friends)
+    console.log(JSON.stringify(this.props.friendrequests))
     return(
       <View style = {styles.container}>
         <KeyboardAwareScrollView>
@@ -132,7 +133,7 @@ class FriendScreen extends Component{
           {this.state.friendRequestNotificationVisible && this.state.addFriendSuccess &&
             <Text>Successfuly sent friend request</Text>}
           {this.state.friendRequestNotificationVisible && !this.state.addFriendSuccess &&
-            <Text>User does exist!</Text>}
+            <Text>User does not exist!</Text>}
           {friendReqestsJSX}
         </KeyboardAwareScrollView>
       </View>

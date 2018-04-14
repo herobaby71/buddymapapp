@@ -9,6 +9,8 @@ import Modal from 'react-native-modal'
 import CreateGroupModal from '../../components/CreateGroupModal'
 import CreateGroupEventModal from '../../components/CreateGroupEventModal'
 import CreateRadiusEventModal from '../../components/CreateRadiusEventModal'
+import CustomSideMenu from '../../components/CustomSideMenu'
+import SideMenu from 'react-native-side-menu';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
 import Popover, {PopoverTouchable} from 'react-native-modal-popover'
 import { Constants, Location, Permissions} from 'expo';
@@ -49,6 +51,10 @@ class MapScreen extends Component{
       //for utility modals
       modalVisible:null,
       modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal'},
+
+      //for showing side menu or not
+      isOpen:false,
+
       //For map (group) overlay
       currentGroupIndex: 0,
     }
@@ -193,6 +199,9 @@ class MapScreen extends Component{
       )
     })
 
+    //Initialize the menubar
+    const menu = <CustomSideMenu activeScene="map" onItemSelected={this.onMenuItemSelected} />;
+
     return (
       <View style = {{flex:1}} ref="rootRef">
         <MapView
@@ -261,8 +270,6 @@ class MapScreen extends Component{
           </View>
         }
 
-
-
         <View style ={styles.friendScreenArrowContainer}>
           <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToFriend}>
             <Icon name='chevron-right' type='entypo' color = '#696969' />
@@ -324,7 +331,6 @@ class MapScreen extends Component{
             {groups}
           </Swiper>
         </View>
-
       </View>
     );
   }

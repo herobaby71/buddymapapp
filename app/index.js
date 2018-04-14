@@ -7,6 +7,7 @@ import { getUserInfo } from './services/user'
 import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
 import LoginScreen from './screens/LoginScreen'
+import CustomSideMenu from './components/CustomSideMenu'
 import FriendScreen from './screens/FriendScreen'
 import ChatScreen from './screens/ChatScreen'
 import GroupScreen from './screens/GroupScreen'
@@ -36,6 +37,7 @@ class Routes extends Component {
     }
   }
 
+
   render(){
     if(!this.state.isLoaded){
       return (
@@ -44,12 +46,13 @@ class Routes extends Component {
     }
     return (
       <ConnectedRouter hideNavBar={true}>
-        <Scene key = "root">
+        
+        <Scene key = "root" drawer={true} contentComponent={CustomSideMenu} drawerWidth={240}>
           <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
-          <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken}/>
-          <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken}/>
-          <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props}/>
-          <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props}/>
+          <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken} />
+          <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken} />
+          <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />
+          <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
           <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
         </Scene>
       </ConnectedRouter>
