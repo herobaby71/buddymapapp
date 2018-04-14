@@ -5,7 +5,6 @@ export function getRequests() {
     type: FETCHING
   }
 }
-
 export function getRequestsSuccess(data) {
   return {
     type: SUCCESS,

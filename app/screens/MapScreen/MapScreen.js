@@ -121,6 +121,10 @@ class MapScreen extends Component{
     }
   }
 
+  goToFriend = () => {
+    Actions.friend()
+  }
+
   getFriendsList = async () => {
     this.props.getFriends()
   }
@@ -257,11 +261,12 @@ class MapScreen extends Component{
           </View>
         }
 
-        <View style ={styles.infoBox}>
-          <View style={styles.infoBoxTextView}>
-            <Text style={styles.infoBoxText}>Status Message:</Text>
-            <Text style={styles.infoBoxText}>Distance:</Text>
-          </View>
+
+
+        <View style ={styles.friendScreenArrowContainer}>
+          <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToFriend}>
+            <Icon name='chevron-right' type='entypo' color = '#696969' />
+          </TouchableOpacity>
         </View>
 
         {this.state.utilityPopUp && <View  animation="bounceIn" style = {styles.utilityContainer}>
@@ -349,6 +354,12 @@ function mapDispatchToProps(dispatch){
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapScreen)
 
+// <View style ={styles.infoBox}>
+//   <View style={styles.infoBoxTextView}>
+//     <Text style={styles.infoBoxText}>Status Message:</Text>
+//     <Text style={styles.infoBoxText}>Distance:</Text>
+//   </View>
+// </View>
 
 // <TouchableOpacity style = {styles.bubble4} onPress={this.showPopover}>
 //    <Avatar small icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>

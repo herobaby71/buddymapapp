@@ -11,10 +11,14 @@ import _ from 'lodash'
 import styles from './styles'
 
 class FriendScreen extends Component{
-  state = {email:""}
-
   constructor(props){
     super(props)
+    this.state = {
+      email:"",
+      addFriendSuccess: false,
+      friendRequestNotificationVisible:false
+    }
+
     // if(!_.isEmpty(this.props.credentials.tokens.access.value)){
     //   Actions.map()
     // }
@@ -52,6 +56,21 @@ class FriendScreen extends Component{
       })
     }
   }
+  acceptRequest(req_id){
+    fetchApi(`api/friend/accept/`,payload = {id:req_id}, method = 'post', headers = {})
+    .then(response => {
+      console.log("Response Accept Friend:", response)
+      if(response.success){
+        console.log("success")
+      }
+      else{
+        console.log("failure")
+      }
+    })
+    .catch(error => {
+      console.log("error",error)
+    })
+  }
   rejectRequests = () => {
     if(!_.isEmpty(this.props.friendrequests.requests)){
       requests = this.props.friendrequests.requests;
@@ -60,10 +79,10 @@ class FriendScreen extends Component{
         .then(response => {
           console.log("Response Accept Friend:", response)
           if(response.success){
-            console.log("success")
+            this.state({addFriendSuccess:true})
           }
           else{
-            console.log("failure")
+            this.state({addFriendSuccess:false})
           }
         })
         .catch(error => {
@@ -91,47 +110,30 @@ class FriendScreen extends Component{
   }
 
   render(){
-    text3 = JSON.stringify(this.props.friendrequests)
+    friendRequests = this.props.friendrequests.requests
+    friendReqestsJSX = friendRequests.map((req) => {
+      return (
+        <TouchableOpacity id={req.id} onPress = {() => this.acceptRequest(req.id)}>
+          <Text>User: {req.from_user}</Text>
+          <Text>Message: {req.message}</Text>
+        </TouchableOpacity>
+      )
+    })
     text4 = JSON.stringify(this.props.friends)
     return(
       <View style = {styles.container}>
         <KeyboardAwareScrollView>
-          <TextInput style={styles.textInput} onChangeText={(text) => this.setState({email:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
-          <Text>Click the name of the person to add friend:</Text>
-          <TouchableOpacity onPress={() => {this.setState({email:"AversiveBias@buddymap.com"}); this.addFriend()}}>
-              <Text>AversiveBias@buddymap.com</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {this.setState({email:"deven298@buddymap.com"}); this.addFriend()}}>
-              <Text>deven298@buddymap.com</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {this.setState({email:"adityapatelgithub@buddymap.com"}); this.addFriend()}}>
-              <Text>adityapatelgithub@buddymap.com</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {this.setState({email:"apoorvas47@buddymap.com"}); this.addFriend()}}>
-              <Text>apoorvas47@buddymap.com</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {this.setState({email:"tgt5@psu.edu"});this.addFriend()}}>
-              <Text>tgt5@psu.edu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {this.setState({email:"herobaby71@buddymap.com"});this.addFriend()}}>
-              <Text>herobaby71@buddymap.com</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.singinButton} onPress={this.acceptRequests}>
-            <Text>Click To Accept All Friend Requests</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.singinButton} onPress={this.getRequestList}>
-            <Text>Click To get Friend Requests</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.singinButton} onPress={this.getFriendsList}>
-            <Text>Click To get Friend Lists</Text>
-          </TouchableOpacity>
-          <Text>Friend Requests That is Pending:</Text>
-          <Text>{text3}</Text>
-          <Text>Your Friends (Previously Added):</Text>
-          <Text>{text4}</Text>
-          <TouchableOpacity style={styles.singinButton} onPress={this.redirectMap}>
-            <Text>Click To Go to Map Screen</Text>
-          </TouchableOpacity>
+          <View style={styles.emailEntryContainer}>
+            <TextInput style={styles.emailEntry} onChangeText={(text) => this.setState({email:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
+            <TouchableOpacity style = {styles.addFriendButton} onPress = {() => {this.addFriend(); this.setState({friendRequestNotificationVisible:true})}}>
+              <Text>    Add</Text>
+            </TouchableOpacity>
+          </View>
+          {this.state.friendRequestNotificationVisible && this.state.addFriendSuccess &&
+            <Text>Successfuly sent friend request</Text>}
+          {this.state.friendRequestNotificationVisible && !this.state.addFriendSuccess &&
+            <Text>User does exist!</Text>}
+          {friendReqestsJSX}
         </KeyboardAwareScrollView>
       </View>
     )

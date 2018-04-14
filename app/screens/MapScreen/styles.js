@@ -106,6 +106,13 @@ export default styles = StyleSheet.create({
     fontSize: Constants.Font20,
   },
 
+  //Friend Screen chevron
+  friendScreenArrowContainer:{
+    position: 'absolute',
+    top: Constants.Harin3,
+    right: Constants.Marin3,
+  },
+
   //Utility Styling (Adding Group/ Events/ etc.)
   utilityContainer:{
     position:'absolute',
