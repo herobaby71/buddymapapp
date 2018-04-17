@@ -131,6 +131,10 @@ class MapScreen extends Component{
     Actions.friend()
   }
 
+  goToProfile = () => {
+    Actions.profile({fromMap:true, friend_profile:null})
+  }
+  
   getFriendsList = async () => {
     this.props.getFriends()
   }
@@ -253,21 +257,10 @@ class MapScreen extends Component{
               </PopoverTouchable>
             </View>
             <View style={styles.bubbleView2}>
-              <PopoverTouchable>
-                <TouchableOpacity style = {styles.bubble2} onPress={this.showPopover}>
-                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
-                </TouchableOpacity>
-                <Popover
-                  contentStyle={styles.content}
-                  arrowStyle={styles.arrow}
-                  backgroundStyle={styles.popoverBackground}
-                  contentStyle={styles.popoverContent}
-                  placement="bottom"
-                >
-                  <Text>Hide Me!</Text>
-                </Popover>
-              </PopoverTouchable>
-            </View>
+				<TouchableOpacity style = {styles.bubble2} onPress={this.goToProfile}>
+				  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
+				</TouchableOpacity>
+			</View>
           </View>
         }
 

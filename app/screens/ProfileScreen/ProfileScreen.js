@@ -3,6 +3,7 @@ import { View, ScrollView, Text, Image, FlatList, TouchableOpacity, ActivityIndi
 import { List, ListItem, SearchBar, ButtonGroup} from "react-native-elements"
 import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux' //navigation
+import { Avatar, Icon } from 'react-native-elements'
 import styles from './styles'
 // import * as plateSelector from '../../data/plates/selector'
 // import * as cartSelector from '../../data/cart/selector'
@@ -11,22 +12,49 @@ import styles from './styles'
 class ProfileScreen extends Component {
   constructor(props){
     super(props)
+	this.state={
+	  status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
 
+	}
   }
 
 
   render(){
     //Redux Store State items
-    return(
+    if (this.props.user.user.status==0){
+		var temp = <Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> Free </Text>
+	}
+	return(
+	
       <View style = {styles.container}>
-        <Text style={styles.title}>PROFILE SCREEN</Text>
-		<Text style={styles.paragraph}>Name: {this.props.user.user.firstName} {this.props.user.user.lastName}</Text>
-		<Text style={styles.paragraph}>Email: {this.props.user.user.email}</Text>
-		<Text style={styles.paragraph}>BuddyCode: {this.props.user.user.buddycode}</Text>
+			 <TouchableOpacity style={styles.chevronArrow} onPress = {() => Actions.pop()}>
+				<Icon name='chevron-left' type='entypo' color = '#696969' />
+			</TouchableOpacity>
+			<View style={{
+			  justifyContent:'center',
+			  alignItems: 'center'}}>
+			  <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85} />
+			</View>
+		 
+			<Text style={styles.title}>PROFILE SCREEN</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user.user.firstName} {this.props.user.user.lastName}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user.user.description}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user.user.status]} </Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user.user.email}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user.user.buddycode}</Text>
+			
+			
       </View>
+	  
+	  
+	  
+	  
     )
   }
 }
+
+
+
 function mapStateToProps(state){
   return {
     user: state.services.user.user,
