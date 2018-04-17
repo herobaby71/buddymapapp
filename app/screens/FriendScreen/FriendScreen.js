@@ -127,7 +127,7 @@ class FriendScreen extends Component{
           <View style={styles.emailEntryContainer}>
             <TextInput style={styles.emailEntry} onChangeText={(text) => this.setState({email:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
             <TouchableOpacity style = {styles.addFriendButton} onPress = {() => {this.addFriend(); this.setState({friendRequestNotificationVisible:true})}}>
-              <Text>    Add</Text>
+              <Text style={styles.paragraph}>	Add Friend</Text>
             </TouchableOpacity>
           </View>
           {this.state.friendRequestNotificationVisible && this.state.addFriendSuccess &&

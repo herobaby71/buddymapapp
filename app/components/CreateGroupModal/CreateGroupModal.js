@@ -17,10 +17,9 @@ class CreateGroupModal extends Component{
 
   _renderModalContent = () => (
     <View style = {this.props.containerStyle}>
-      <Text>Create Group Modal</Text>
-      <TouchableOpacity onPress = {this.props.hideModal}>
-        <Text>Hide Modal</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>CREATE A GROUP</Text>
+		<TextInput style={styles.groupEntry} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Enter Group Name' />
+	  
     </View>
   );
 

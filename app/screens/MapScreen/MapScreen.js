@@ -129,6 +129,7 @@ class MapScreen extends Component{
 
   goToFriend = () => {
     Actions.friend()
+	console.log("THIS IS",this.props.user.user.faceboookAvatar)
   }
 
   goToProfile = () => {

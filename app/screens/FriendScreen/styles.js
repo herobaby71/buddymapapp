@@ -20,5 +20,10 @@ export default styles = StyleSheet.create({
   },
   addFriendButton:{
     flex:1,
+  },
+  paragraph:{
+	  position: 'absolute',
+	  top: Constants.Harin2,
+	  right: Constants.Marin1,
   }
 });
