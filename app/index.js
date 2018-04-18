@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, AsyncStorage } from 'react-native';
-import {Router,  Scene, Stack} from 'react-native-router-flux'
+import {Drawer, Router,  Scene, Stack} from 'react-native-router-flux'
 import {Provider, connect} from 'react-redux'
 import { authenticate, refreshToken, validateAccessToken} from './services/session'
 import { getUserInfo } from './services/user'
@@ -8,6 +8,7 @@ import Home from './screens/Home'
 import MapScreen from './screens/MapScreen'
 import LoginScreen from './screens/LoginScreen'
 import CustomSideMenu from './components/CustomSideMenu'
+import GroupSideMenu from './components/GroupSideMenu'
 import FriendScreen from './screens/FriendScreen'
 import ChatScreen from './screens/ChatScreen'
 import GroupScreen from './screens/GroupScreen'
@@ -47,16 +48,18 @@ class Routes extends Component {
     }
     return (
       <ConnectedRouter hideNavBar={true}>
-        
-        <Scene key = "root" drawer={true} contentComponent={CustomSideMenu} drawerWidth={240}>
-          <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
-          <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken} />
-          <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken} />
-          <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />
-          <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
-          <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
-		  <Scene key = "profile" component = {ProfileScreen} hideNavBar={true} {...this.props} />
-        </Scene>
+        <Stack hideNavBar={true} key="root">
+          <Drawer key = "drawer" drawer={true} contentComponent={CustomSideMenu} drawerWidth={240}>
+            <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
+            <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken} />
+            <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken} />
+            <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
+            <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
+          </Drawer>
+          <Drawer key ="gdrawer" drawer={true} drawerPosition="right" contentComponent={GroupSideMenu} drawerWidth={200}>
+            <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />
+          </Drawer>
+        </Stack>
       </ConnectedRouter>
     )
   }
