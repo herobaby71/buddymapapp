@@ -3,7 +3,7 @@ import { Text, TextInput, Animated, ScrollView, Image, ImageBackground, Platform
 import { View } from 'react-native-animatable'
 import Fade  from '../../components/Fade'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { Avatar, ButtonGroup } from 'react-native-elements'
+import { Avatar, ButtonGroup, SocialIcon } from 'react-native-elements'
 import {Constants, Images} from '../../themes/'
 // import { BlurView } from 'expo'
 // import { BlurView, VibrancyView } from 'react-native-blur'
@@ -12,7 +12,7 @@ import { Actions, ActionConst } from 'react-native-router-flux'; //navigation
 
 import { connect } from 'react-redux' //Interaction with server
 import { fetchApi } from '../../services/api'
-import { authenticate } from '../../services/session'
+import { authenticate, socialAuthenticate } from '../../services/session'
 import * as sessionSelectors from '../../services/session/selectors'
 import _ from 'lodash'
 import styles from './styles'
@@ -65,6 +65,21 @@ class LoginScreen extends Component{
     }
     else{
       this.setState({error_message:"Email or Password is not correct",successAuth:false})
+    }
+  }
+
+  async facebookSignIn(){
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1941676536149627', {
+        permissions: ['public_profile', 'email', 'user_friends'],
+      });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(
+        `https://graph.facebook.com/me?access_token=${token}`);
+      Alert.alert(
+        'Logged in!',
+        `Hi ${(await response.json()).name}!`,
+      );
     }
   }
 
@@ -145,6 +160,14 @@ class LoginScreen extends Component{
               <TouchableOpacity style={styles.signInButton} onPress={this.signIn}>
                 <Text style={styles.signin} >Login to Buddymap</Text>
               </TouchableOpacity>
+              <SocialIcon
+                title = 'Sign In With Facebook'
+                button
+                iconSize={18}
+                style = {styles.signInButtonFacebook}
+                onPress = {() => this.facebookSignIn()}
+                type='facebook'
+              />
             </Fade>
 
             <Fade visible={this.state.visibleRegister}>
@@ -179,6 +202,7 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch, email="", password="", token="", fbdata=null){
   return{
     login: (email, password) => dispatch(authenticate(email,password)),
+    facebookLogin: (token) => dispatch(socialAuthenticate(token))
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

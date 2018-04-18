@@ -4,7 +4,9 @@ import {GiftedChat, Actions, Bubble, SystemMessage} from 'react-native-gifted-ch
 import CustomActions from './CustomActions';
 import CustomView from './CustomView';
 import emojiUtils from 'emoji-utils';
-import SlackMessage from './SlackMessage'
+import SlackMessage from './SlackMessage';
+import SideMenu from 'react-native-side-menu';
+import GroupSideMenu from '../../components/GroupSideMenu';
 import styles from './styles'
 import * as sessionSelectors from '../../services/session/selectors'
 import {WSService, getWebSocket} from '../../services/websocket'//websocket call to server
@@ -23,6 +25,7 @@ class ChatScreen extends Component{
       loadEarlier:false, //load earlier messages (when user scroll up) if true
       online:[],
       isLoadingEarlier:false,
+      isOpen:false,
     }
 
     this._isMounted = false;
@@ -217,6 +220,7 @@ class ChatScreen extends Component{
   }
 
   render(){
+    const menu = <GroupSideMenu />;
     return (
       <GiftedChat
         messages = {this.state.messages}

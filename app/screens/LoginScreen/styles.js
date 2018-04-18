@@ -85,6 +85,17 @@ export default styles = StyleSheet.create({
     // shadowColor: 'black',
     // shadowOpacity: 0.2,
   },
+  signInButtonFacebook:{
+    paddingVertical: Constants.Harin1,
+    marginBottom:Constants.Harin3,
+    marginLeft:Constants.Marin5,
+    marginRight:Constants.Marin5,
+    borderWidth:1,
+    borderRadius:10,
+  },
+  signin:{
+    alignItems:'center'
+  },
   signInButtonText:{
     color:'white',
     // fontFamily: 'CORBEL',
