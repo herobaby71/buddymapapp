@@ -24,15 +24,15 @@ class ProfileScreen extends Component {
     if (this.props.user.user.status==0){
 		var temp = <Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> Free </Text>
 	}
-	if (this.props.user.user.faceboookAvatar==undefined){
-		var pictureURI= <Avatar 
-						large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
-	}
-	else{
-		var pictureURI=<Image
-				style={{width: 75, height: 75}}
-				source={{uri: this.props.user.user.faceboookAvatar}}
-				/>
+		if (this.props.user.user.faceboookAvatar==undefined){
+			var pictureURI= <Avatar 
+							large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
+		}
+		else{
+			var pictureURI=<Image
+					style={{width: 100, height: 100}}
+					source={{uri: this.props.user.user.faceboookAvatar}}
+					/>
 	}
 	return(
 	
