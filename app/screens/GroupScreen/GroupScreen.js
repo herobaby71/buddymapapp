@@ -12,8 +12,7 @@ import styles from './styles'
 class GroupScreen extends Component {
   constructor(props){
     super(props)
-
-  }
+}
 
 
   render(){

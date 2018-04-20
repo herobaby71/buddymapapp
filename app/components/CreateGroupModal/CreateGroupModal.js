@@ -18,7 +18,7 @@ class CreateGroupModal extends Component{
   _renderModalContent = () => (
     <View style = {this.props.containerStyle}>
       <Text>Create Group Modal</Text>
-      <TouchableOpacity onPress = {this.props.hideModal}>
+ß      <TouchableOpacity onPress = {this.props.hideModal}>
         <Text>Hide Modal</Text>
       </TouchableOpacity>
     </View>
