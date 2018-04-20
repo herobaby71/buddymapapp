@@ -1,4 +1,4 @@
-mkdirimport {StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Constants} from '../../themes/'
 export default StyleSheet.create({
   Container: {

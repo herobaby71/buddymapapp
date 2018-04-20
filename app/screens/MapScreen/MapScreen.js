@@ -129,13 +129,13 @@ class MapScreen extends Component{
 
   goToFriend = () => {
     Actions.friend()
-	console.log("THIS IS",this.props.user.user.faceboookAvatar)
+    // console.log("THIS IS",this.props.user.user.faceboookAvatar)
   }
 
   goToProfile = () => {
     Actions.profile({fromMap:true, friend_profile:null})
   }
-  
+
   getFriendsList = async () => {
     this.props.getFriends()
   }

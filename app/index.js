@@ -55,6 +55,7 @@ class Routes extends Component {
             <Scene key = "login" component = {LoginScreen} hideNavBar={true} {...this.props} initial={!this.state.hasToken} />
             <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
             <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
+            <Scene key = "profile" component = {ProfileScreen} hideNavBar={true} {...this.props}/>
           </Drawer>
           <Drawer key ="gdrawer" drawer={true} drawerPosition="right" contentComponent={GroupSideMenu} drawerWidth={200}>
             <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />
