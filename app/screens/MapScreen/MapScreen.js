@@ -26,6 +26,7 @@ import { getUser } from '../../services/user'
 
 import _ from 'lodash'
 import styles from './styles'
+import {WSService, getWebSocket} from '../../services/websocket'//websocket call to server
 
 class MapScreen extends Component{
   constructor(props){
@@ -58,6 +59,7 @@ class MapScreen extends Component{
       //For map (group) overlay
       currentGroupIndex: 0,
     }
+
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
@@ -70,6 +72,20 @@ class MapScreen extends Component{
     }
     this.props.getUserInfo()
     this.props.getGroups()
+    this.props.getFriends()
+
+    this._isMounted = false;
+    this._isAlright = null;
+    this.websocket = getWebSocket('locator/stream/')
+
+    //console.log(this.props.friends)
+
+    if(!(_.isEmpty(this.props.friends))){
+      this.websocket.onopen = () =>{
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.friends}))
+      }
+    }
+
   }
   componentWillReceiveProps(nextProps) {
     //Once group fetching is finished, update the local state
