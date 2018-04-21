@@ -20,6 +20,7 @@ class FriendScreen extends Component{
     }
 
     this.props.getFriendRequests()
+    this.props.getFriends()
     // if(!_.isEmpty(this.props.credentials.tokens.access.value)){
     //   Actions.map()
     // }
@@ -111,6 +112,20 @@ class FriendScreen extends Component{
   }
 
   render(){
+    console.log("hi:   2 1")
+    console.log(JSON.stringify(this.props.friendrequests))
+    console.log(JSON.stringify(this.props.friends))
+
+    lst = []
+    if ( this.props.friends.friends.length > 0 ) {
+      console.log(this.props.friends.friends[0].firstName)
+      for (var i = 0; i < this.props.friends.friends.length; i++){
+        lst.push(<Text style={styles.paragraph2}>{this.props.friends.friends[i].firstName + " " + this.props.friends.friends[i].lastName}</Text>)
+      }
+    }
+    //console.log(JSON.stringify(this.props.friends.friends[0].firstName))
+
+
     friendRequests = this.props.friendrequests.requests
     friendReqestsJSX = friendRequests.map((req) => {
       return (
@@ -121,7 +136,7 @@ class FriendScreen extends Component{
       )
     })
     console.log(JSON.stringify(this.props.friendrequests))
-    return(
+      return(
       <View style = {styles.container}>
         <KeyboardAwareScrollView>
           <View style={styles.emailEntryContainer}>
@@ -135,6 +150,10 @@ class FriendScreen extends Component{
           {this.state.friendRequestNotificationVisible && !this.state.addFriendSuccess &&
             <Text>User does not exist!</Text>}
           {friendReqestsJSX}
+          <Text style={styles.title}>My Friend List</Text>
+          <View>
+            {lst}
+          </View>
         </KeyboardAwareScrollView>
       </View>
     )

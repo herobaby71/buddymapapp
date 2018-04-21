@@ -25,5 +25,17 @@ export default styles = StyleSheet.create({
 	  position: 'absolute',
 	  top: Constants.Harin2,
 	  right: Constants.Marin1,
-  }
+  },
+  paragraph2: {
+    margin: 5,
+    fontSize: 20,
+    textAlign: 'left',
+  },
+
+  title: {
+    margin: 24,
+    fontSize: 30,
+    textAlign: 'center',
+	color: 'rgb(111,187,215)',
+  },
 });

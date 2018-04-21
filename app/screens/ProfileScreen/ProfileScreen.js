@@ -21,11 +21,12 @@ class ProfileScreen extends Component {
 
   render(){
     //Redux Store State items
+      console.log(this.props)
     if (this.props.user.user.status==0){
 		var temp = <Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> Free </Text>
 	}
 	if (this.props.user.user.faceboookAvatar==undefined){
-		var pictureURI= <Avatar 
+		var pictureURI= <Avatar
 						large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
 	}
 	else{
@@ -35,7 +36,7 @@ class ProfileScreen extends Component {
 				/>
 	}
 	return(
-	
+
       <View style = {styles.container}>
 			 <TouchableOpacity style={styles.chevronArrow} onPress = {() => Actions.pop()}>
 				<Icon name='chevron-left' type='entypo' color = '#696969' />
@@ -45,20 +46,20 @@ class ProfileScreen extends Component {
 			  alignItems: 'center'}}>
 			  {pictureURI}
 			</View>
-			
+
 			<Text style={styles.title}>PROFILE SCREEN</Text>
 			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user.user.firstName} {this.props.user.user.lastName}</Text>
 			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user.user.description}</Text>
 			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user.user.status]} </Text>
 			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user.user.email}</Text>
 			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user.user.buddycode}</Text>
-			
-			
+
+
       </View>
-	  
-	  
-	  
-	  
+
+
+
+
     )
   }
 }
