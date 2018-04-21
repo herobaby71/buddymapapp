@@ -13,6 +13,7 @@ import FriendScreen from './screens/FriendScreen'
 import ChatScreen from './screens/ChatScreen'
 import GroupScreen from './screens/GroupScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import NotificationScreen from './screens/NotificationScreen'
 import _ from 'lodash'
 
 const ConnectedRouter = connect()(Router)
@@ -56,6 +57,7 @@ class Routes extends Component {
             <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
             <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
             <Scene key = "profile" component = {ProfileScreen} hideNavBar={true} {...this.props}/>
+			<Scene key = "notifications" component = {NotificationScreen} hideNavBar={true} {...this.props}/>
           </Drawer>
           <Drawer key ="gdrawer" drawer={true} drawerPosition="right" contentComponent={GroupSideMenu} drawerWidth={200}>
             <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />

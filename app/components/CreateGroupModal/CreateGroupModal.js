@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {TouchableOpacity, TextInput, View, Text} from 'react-native'
 import Modal from 'react-native-modal'
-
+import styles from './styles'
 class CreateGroupModal extends Component{
   constructor(props){
     super(props)
@@ -17,9 +17,11 @@ class CreateGroupModal extends Component{
 
   _renderModalContent = () => (
     <View style = {this.props.containerStyle}>
-      <Text style={styles.title}>CREATE A GROUP</Text>
-		<TextInput style={styles.groupEntry} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Enter Group Name' />
-	  
+		<Text style={styles.title}> CREATE A GROUP</Text>
+		<TextInput style={styles.groupEntry} placeholder='	Enter Group Name		' />
+		  <TouchableOpacity>
+				 <Text style={styles.addGroupButton}>Create Group</Text>
+			</TouchableOpacity>
     </View>
   );
 

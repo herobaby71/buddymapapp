@@ -22,7 +22,7 @@ class CustomSideMenu extends Component{
         <Text style={[styles.text, (activeScene=='map') && styles.redtext]} onPress={() => this.onItemSelected('map')}>Home</Text>
         <Text style={[styles.text, (activeScene=='profile') && styles.redtext]} onPress={() => this.onItemSelected('profile')}>Profile</Text>
         <Text style={[styles.text, (activeScene=='notifications') && styles.redtext]} onPress={() => this.onItemSelected('notifications')}>Notifications</Text>
-        <Text style={[styles.text, (activeScene=='groups') && styles.redtext]} onPress={() => this.onItemSelected('groups')}>Groups</Text>
+        <Text style={[styles.text, (activeScene=='group') && styles.redtext]} onPress={() => this.onItemSelected('group')}>Groups</Text>
         <Text style={[styles.text, (activeScene=='friend') && styles.redtext]} onPress={() => this.onItemSelected('friend')}>Friends</Text>
         <Text style={[styles.text, (activeScene=='logout') && styles.redtext]} onPress={() => this.onItemSelected('login')}>Logout</Text>
       </View>
