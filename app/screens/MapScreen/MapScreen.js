@@ -127,8 +127,8 @@ class MapScreen extends Component{
     }
   }
 
-  goToFriend = () => {
-    Actions.friend()
+  goToNewEvent = () => {
+    Actions.newEvent()
   }
 
   getFriendsList = async () => {
@@ -271,7 +271,7 @@ class MapScreen extends Component{
         }
 
         <View style ={styles.friendScreenArrowContainer}>
-          <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToFriend}>
+          <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToNewEvent}>
             <Icon name='chevron-right' type='entypo' color = '#696969' />
           </TouchableOpacity>
         </View>

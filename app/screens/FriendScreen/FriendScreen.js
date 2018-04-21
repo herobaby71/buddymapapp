@@ -112,14 +112,15 @@ class FriendScreen extends Component{
 
   render(){
     friendRequests = this.props.friendrequests.requests
-    friendReqestsJSX = friendRequests.map((req) => {
-      return (
-        <TouchableOpacity id={req.id} onPress = {() => this.acceptRequest(req.id)}>
-          <Text>User: {req.from_user}</Text>
-          <Text>Message: {req.message}</Text>
-        </TouchableOpacity>
-      )
-    })
+    friendReqestsJSX = <Text></Text>
+    // friendRequests.map((req) => {
+    //   return (
+    //     <TouchableOpacity id={req.id} onPress = {() => this.acceptRequest(req.id)}>
+    //       <Text>User: {req.from_user}</Text>
+    //       <Text>Message: {req.message}</Text>
+    //     </TouchableOpacity>
+    //   )
+    // })
     console.log(JSON.stringify(this.props.friendrequests))
     return(
       <View style = {styles.container}>

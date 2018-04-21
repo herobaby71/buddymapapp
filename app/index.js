@@ -11,6 +11,7 @@ import CustomSideMenu from './components/CustomSideMenu'
 import FriendScreen from './screens/FriendScreen'
 import ChatScreen from './screens/ChatScreen'
 import GroupScreen from './screens/GroupScreen'
+import NewEventScreen from './screens/NewEventScreen'
 import _ from 'lodash'
 
 const ConnectedRouter = connect()(Router)
@@ -46,7 +47,7 @@ class Routes extends Component {
     }
     return (
       <ConnectedRouter hideNavBar={true}>
-        
+
         <Scene key = "root" drawer={true} contentComponent={CustomSideMenu} drawerWidth={240}>
           <Scene key = "home" type="reset" component = {Home} hideNavBar={true} {...this.props} />
           <Scene key = "map" component = {MapScreen} hideNavBar={true} {...this.props} initial={this.state.hasToken} />
@@ -54,6 +55,7 @@ class Routes extends Component {
           <Scene key = "chat" component = {ChatScreen} hideNavBar={true} {...this.props} />
           <Scene key = "group" component = {GroupScreen} hideNavBar={true} {...this.props} />
           <Scene key = "friend" component = {FriendScreen} hideNavBar={true} {...this.props} />
+          <Scene key = "newEvent" component = {NewEventScreen} hideNavBar={true} {...this.props} />
         </Scene>
       </ConnectedRouter>
     )
