@@ -43,6 +43,7 @@ class CreateGroupEventModal extends Component{
       <View style = {this.props.containerStyle}>
         <Text> NameofEvent </Text>
         <TextInput
+          placeholder = "Enter Text"
           value={this.state.nameOfEvent}
           onChangeText = { value => this.setState({nameOfEvent: value})}
         />
