@@ -58,6 +58,9 @@ class MapScreen extends Component{
 
       //For map (group) overlay
       currentGroupIndex: 0,
+
+      //WebSocket Status
+      locatorType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'}
     }
 
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -65,7 +68,9 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this._getLocationAsync, 200)
+      this.timer = setInterval(this.onSendLocator, 5000)
+      this.timer = setInterval(this._getLocationAsync, 20)
+
       // this.timer = setInterval(this._postLocationAsync, 1000)
       // this.timer = setInterval(this.getFriendsList, 1000)
       // this.timer = setInterval(validateAccessToken, 900000)
@@ -76,17 +81,19 @@ class MapScreen extends Component{
 
     this._isMounted = false;
     this._isAlright = null;
+
+
+    //Websocket implementation for getting locator of everyone in the group
     this.websocket = getWebSocket('locator/stream/')
 
-    //console.log(this.props.friends)
-
-    if(!(_.isEmpty(this.props.friends))){
+    if(!(_.isEmpty(this.props.groups[this.state.currentGroupIndex]))){
       this.websocket.onopen = () =>{
-        this.websocket.send(JSON.stringify({command:'join', group:this.props.friends}))
+        this.websocket.send(JSON.stringify({command:'join', group:this.state.currentGroupIndex}))
       }
     }
-
+    this.websocket.onmessage = this.onReceiveLoc
   }
+
   componentWillReceiveProps(nextProps) {
     //Once group fetching is finished, update the local state
     if(!nextProps.groups.isFetching){
@@ -113,6 +120,27 @@ class MapScreen extends Component{
     )
   }
 
+  onSendLocator = () => {
+    // console.log(this.state.location)
+    var com = {command:'send', group: this.state.currentGroupIndex, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
+    console.log("send ",com)
+    websocket = getWebSocket('locator/stream/')
+    websocket.onopen = () => {
+      websocket.send(JSON.stringify({command:'join', group:this.state.currentGroupIndex}))
+      websocket.send(JSON.stringify(com))
+    }
+  }
+
+  onReceiveLoc = (event) => {
+    console.log("recv ",event.data)
+    var data = JSON.parse(event.data)
+    // "LOC_type": settings.LOC_TYPE_MESSAGE,
+    // "group": event["group_id"],
+    // "buddycode": event["buddycode"],
+    // "longitude": event["longitude"],
+    // "latitude": event["latitude"],
+  }
+
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -120,6 +148,7 @@ class MapScreen extends Component{
         errorMessage: 'Permission to access location was denied',
       });
     }
+
 
     let location = await Location.getCurrentPositionAsync({});
     if(this.refs.rootRef)
@@ -160,23 +189,9 @@ class MapScreen extends Component{
     this.setState({popoverVisible:!this.state.popoverVisible})
   }
 
-  // incrementMapLayer = () => {
-  //   this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.props.groups.groups.length})
-  // }
-  //
-  // decrementMapLayer = () => {
-  //   if(this.state.currentGroupIndex == 0){
-  //     this.setState({currentGroupIndex: this.props.groups.groups.length-1})
-  //   }
-  //   else{
-  //     this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.props.groups.groups.length})
-  //   }
-  // }
-
   goToChat = () =>{
     Actions.chat({group:this.props.groups.groups[this.state.currentGroupIndex]})
-	console.log("THIS IS ",this.props.user.user)
-  }
+	}
 
   render(){
     // Marker of Friends Location.
