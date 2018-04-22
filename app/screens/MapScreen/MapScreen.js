@@ -88,7 +88,7 @@ class MapScreen extends Component{
 
     if(!(_.isEmpty(this.props.groups[this.state.currentGroupIndex]))){
       this.websocket.onopen = () =>{
-        this.websocket.send(JSON.stringify({command:'join', group:this.state.currentGroupIndex}))
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups[this.state.currentGroupIndex].id}))
       }
     }
     this.websocket.onmessage = this.onReceiveLoc
@@ -122,16 +122,17 @@ class MapScreen extends Component{
 
   onSendLocator = () => {
     // console.log(this.state.location)
-    var com = {command:'send', group: this.state.currentGroupIndex, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
+    var com = {command:'send', group: this.props.groups[this.state.currentGroupIndex].id, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
     console.log("send ",com)
     websocket = getWebSocket('locator/stream/')
     websocket.onopen = () => {
-      websocket.send(JSON.stringify({command:'join', group:this.state.currentGroupIndex}))
+      websocket.send(JSON.stringify({command:'join', group:this.props.groups[this.state.currentGroupIndex].id}))
       websocket.send(JSON.stringify(com))
     }
   }
 
   onReceiveLoc = (event) => {
+    console.log("recv ",event)
     console.log("recv ",event.data)
     var data = JSON.parse(event.data)
     // "LOC_type": settings.LOC_TYPE_MESSAGE,
