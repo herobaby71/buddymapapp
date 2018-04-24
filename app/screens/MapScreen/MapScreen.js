@@ -62,6 +62,7 @@ class MapScreen extends Component{
       //WebSocket Status
       locatorType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'},
       userLocations:{},
+      // 'denden':{"firstName":"Monny", "lastName":"HOHO", "longitude":"-77.857966", "latitude":"40.799120"}
     }
 
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -69,7 +70,7 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this.onSendLocator, 10000)
+      this.timer = setInterval(this.onSendLocator, 1300)
       this.timer = setInterval(this._getLocationAsync, 20)
 
       // this.timer = setInterval(this._postLocationAsync, 1000)
@@ -140,21 +141,25 @@ class MapScreen extends Component{
     // "longitude": event["longitude"],
     // "latitude": event["latitude"],
     console.log("recv ",event.data)
+    console.log(this.props.user)
     var data = JSON.parse(event.data)
-    if(this.state.locatorType[data.LOC_type] == 'MSG'){
-      this.setState((previousState) => {
-        return {
-          userLocations:
-          {...previousState.userLocations,
-            [data.buddycode]:{
-              firstName: data.firstName,
-              lastName: data.lastName,
-              longitude:data.longitude,
-              latitude:data.latitude
+    if(data.buddycode != this.props.user.user.buddycode){
+      if(this.state.locatorType[data.LOC_type] == 'MSG'){
+        this.setState((previousState) => {
+          return {
+            userLocations:
+            {...previousState.userLocations,
+              [data.buddycode]:{
+                firstName: data.firstName,
+                lastName: data.lastName,
+                longitude:data.longitude,
+                latitude:data.latitude,
+                buddycode:data.buddycode
+              }
             }
           }
-        }
-      })
+        })
+      }
     }
   }
 
@@ -242,18 +247,20 @@ class MapScreen extends Component{
     //   )
     // })
 
-    let markers = Object.keys(this.state.userLocations).forEach((key) => {
+
+    var markers = Object.keys(this.state.userLocations).map((key) => {
       var friend = this.state.userLocations[key]
+      // console.log(friend["latitude"])
       return (
         <Marker
-          coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
+          coordinate={{latitude:Number(friend["latitude"]), longitude:Number(friend["longitude"])}}
           key = {key}
           onCalloutPress={event => {console.log(event.nativeEvent)}}
-          title= {friend.firstName.concat(" ", friend.lastName)}
+          title= {friend["firstName"].concat(" ", friend["lastName"])}
           description={this.state.status[0]}
         >
             <Callout onPress={() => {console.log("Callout Pressed")}}>
-                <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
+                <Text>{friend["firstName"].concat(" ", friend["lastName"])}</Text>
                 <Text>{this.state.status[0]}</Text>
             </Callout>
         </Marker>
