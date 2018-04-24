@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
 import { TouchableOpacity, View, Text} from 'react-native'
 import { Avatar } from 'react-native-elements'
+import { connect } from 'react-redux'
 import { Actions} from 'react-native-router-flux'; //navigation
 import styles from './styles'
 
 class CustomSideMenu extends Component{
   onItemSelected = item => {
+    if(item.toLowerCase() == 'profile'){
+      Actions[item.toLowerCase()]({user_prof:this.props.user.user})
+    }
     Actions[item.toLowerCase()]()
     this.setState({
       isOpen: false,
@@ -29,4 +33,10 @@ class CustomSideMenu extends Component{
     );
   }
 }
-export default CustomSideMenu
+function mapStateToProps(state){
+  return {
+    user: state.services.user.user,
+  }
+}
+
+export default connect(mapStateToProps, null)(CustomSideMenu)
