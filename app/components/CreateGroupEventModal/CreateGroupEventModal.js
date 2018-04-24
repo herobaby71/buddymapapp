@@ -31,7 +31,7 @@ class CreateGroupEventModal extends Component{
   _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
   _showLocPicker = () => this.setState({ locPickerVisibleWidth:200});
-  _hideLocPicker = () => this.setState({ locPickerVisibleWidth: 0});
+  _hideLocPicker = () => this.setState({ locPickerVisibleWidth:0});
 
   _handleDatePicked = (date) => {
     this._hideDateTimePicker();
@@ -76,8 +76,8 @@ class CreateGroupEventModal extends Component{
                 height: this.state.locPickerVisibleWidth
               }}
        initialRegion={{
-         latitude: this.state.locOfEventLat, // ERROR HERE "this is a reserved wprd"
-         longitude: -122,//{this.state.locOfEventLong},//(this.props.userLoc.coords.longitude)!= null ? this.props.userLoc.coords.longitude : -122.4324,
+         latitude: this.state.locOfEventLat,
+         longitude: this.state.locOfEventLong,
          latitudeDelta: 0.0922,
          longitudeDelta: 0.0421,
        }}
