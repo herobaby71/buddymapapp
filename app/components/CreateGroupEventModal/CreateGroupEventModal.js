@@ -96,6 +96,7 @@ class CreateGroupEventModal extends Component{
           <Text>{"Done Selecting Location"}</Text>
         </TouchableOpacity>
        </MapView>
+
       </View>
   );
 
