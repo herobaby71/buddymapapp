@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {TouchableOpacity, TextInput, View, Text} from 'react-native'
+//import { MapView } from 'expo';
+import MapView from 'react-native-maps'
 import Modal from 'react-native-modal'
-import { MapView } from 'expo';
 
 import { Actions } from 'react-native-router-flux' //navigation
 // import * as plateSelector from '../../data/plates/selector'
@@ -20,9 +21,15 @@ class CreateGroupEventModal extends Component{
       locPickerVisibleWidth: 0,
       nameOfEvent: "Enter text",
       //descriptionOfEvent: null,
-      locOfEventLat: 37.78825, //<-- default
-      locOfEventLong: -122.4324,
-      dateOfEvent: null
+      dateOfEvent: null,
+      locOfMap: {
+        latitude: 37.788825,
+        longitude: -122.4324,
+      }, // ignore this, needed to initialize map frame position
+      locOfEvent: {
+        latitude: 37.788825,
+        longitude: -122.4324,
+      }
       //timeOfEvent: null
     }
   }
@@ -30,7 +37,7 @@ class CreateGroupEventModal extends Component{
   _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
   _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
-  _showLocPicker = () => this.setState({ locPickerVisibleWidth:200});
+  _showLocPicker = () => this.setState({ locPickerVisibleWidth:350});
   _hideLocPicker = () => this.setState({ locPickerVisibleWidth:0});
 
   _handleDatePicked = (date) => {
@@ -44,10 +51,9 @@ class CreateGroupEventModal extends Component{
     this.setState({modalVisible: newProps.modalVisible})
     if (typeof newProps.userLoc != 'undefined') {
       this.setState({
-          locOfEventLat: newProps.userLoc.latitude,
-          locOfEventLong: newProps.userLoc.longitude
+          locOfMap: {latitude: newProps.userLoc.latitude, longitude: newProps.userLoc.longitude}
         }); // this part def works!
-        //console.log("area here was entered",this.state.locOfEventLat)
+        //console.log("area here was entered",this.state.locOfMapLat)
     }
   }
 
@@ -76,20 +82,38 @@ class CreateGroupEventModal extends Component{
                 height: this.state.locPickerVisibleWidth
               }}
        initialRegion={{
-         latitude: this.state.locOfEventLat,
-         longitude: this.state.locOfEventLong,
+         latitude: this.state.locOfMap.latitude,
+         longitude: this.state.locOfMap.longitude,
          latitudeDelta: 0.0922,
          longitudeDelta: 0.0421,
        }}
-       />
+       >
+       <MapView.Marker draggable
+        coordinate={this.state.locOfMap}
+        onDragEnd={(e) => this.setState({ locOfEvent: e.nativeEvent.coordinate })}
+        />
+        <TouchableOpacity onPress={this._hideLocPicker}>
+          <Text>{"Done Selecting Location"}</Text>
+        </TouchableOpacity>
+       </MapView>
       </View>
   );
+
+
+  _escapeModal = () => {
+    if (this.state.locPickerVisibleWidth !== 0) {
+       this._hideLocPicker()
+    }
+    else {
+       this.props.hideModal()
+    }
+  }
 
   render(){
     return(
       <Modal
         isVisible={this.state.modalVisible}
-        onBackdropPress={this.props.hideModal}
+        onBackdropPress={this._escapeModal}
         backdropOpacity={.2}
         animationIn="fadeIn"
         animationOut="fadeOut"
