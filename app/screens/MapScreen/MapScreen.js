@@ -68,7 +68,7 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this.onSendLocator, 5000)
+      this.timer = setInterval(this.onSendLocator, 1000)
       this.timer = setInterval(this._getLocationAsync, 20)
 
       // this.timer = setInterval(this._postLocationAsync, 1000)
@@ -86,14 +86,13 @@ class MapScreen extends Component{
     //Websocket implementation for getting locator of everyone in the group
     this.websocket = getWebSocket('locator/stream/')
 
-    if(!(_.isEmpty(this.props.groups[this.state.currentGroupIndex]))){
+    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
       this.websocket.onopen = () =>{
-        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups[this.state.currentGroupIndex].id}))
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
       }
     }
     this.websocket.onmessage = this.onReceiveLoc
   }
-
   componentWillReceiveProps(nextProps) {
     //Once group fetching is finished, update the local state
     if(!nextProps.groups.isFetching){
@@ -119,18 +118,19 @@ class MapScreen extends Component{
       }
     )
   }
-
   onSendLocator = () => {
-    // console.log(this.state.location)
-    var com = {command:'send', group: this.props.groups[this.state.currentGroupIndex].id, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
-    console.log("send ",com)
-    websocket = getWebSocket('locator/stream/')
-    websocket.onopen = () => {
-      websocket.send(JSON.stringify({command:'join', group:this.props.groups[this.state.currentGroupIndex].id}))
-      websocket.send(JSON.stringify(com))
+    // console.log(this.props.groups[this.state.currentGroupIndex])
+    // console.log(this.props.groups)
+    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
+      var com = {command:'send', group: this.props.groups.groups[this.state.currentGroupIndex].id, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
+      console.log("send ",com)
+      websocket = getWebSocket('locator/stream/')
+      websocket.onopen = () => {
+        websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
+        websocket.send(JSON.stringify(com))
+      }
     }
   }
-
   onReceiveLoc = (event) => {
     console.log("recv ",event)
     console.log("recv ",event.data)
