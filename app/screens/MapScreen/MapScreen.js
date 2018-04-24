@@ -60,7 +60,8 @@ class MapScreen extends Component{
       currentGroupIndex: 0,
 
       //WebSocket Status
-      locatorType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'}
+      locatorType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'},
+      userLocations:{},
     }
 
     if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -68,7 +69,7 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this.onSendLocator, 1000)
+      this.timer = setInterval(this.onSendLocator, 10000)
       this.timer = setInterval(this._getLocationAsync, 20)
 
       // this.timer = setInterval(this._postLocationAsync, 1000)
@@ -82,16 +83,6 @@ class MapScreen extends Component{
     this._isMounted = false;
     this._isAlright = null;
 
-
-    //Websocket implementation for getting locator of everyone in the group
-    this.websocket = getWebSocket('locator/stream/')
-
-    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
-      this.websocket.onopen = () =>{
-        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
-      }
-    }
-    this.websocket.onmessage = this.onReceiveLoc
   }
   componentWillReceiveProps(nextProps) {
     //Once group fetching is finished, update the local state
@@ -117,6 +108,17 @@ class MapScreen extends Component{
         this.setState({location, region})
       }
     )
+    //Websocket implementation for getting locator of everyone in the group
+    this.websocket = getWebSocket('locator/stream/')
+    this.websocket.onopen = () =>{
+      this.websocket.send(JSON.stringify({command:'join', group:1}))
+    }
+    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
+      this.websocket.onopen = () =>{
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
+      }
+    }
+    this.websocket.onmessage = this.onReceiveLoc
   }
   onSendLocator = () => {
     // console.log(this.props.groups[this.state.currentGroupIndex])
@@ -132,14 +134,28 @@ class MapScreen extends Component{
     }
   }
   onReceiveLoc = (event) => {
-    console.log("recv ",event)
-    console.log("recv ",event.data)
-    var data = JSON.parse(event.data)
     // "LOC_type": settings.LOC_TYPE_MESSAGE,
     // "group": event["group_id"],
     // "buddycode": event["buddycode"],
     // "longitude": event["longitude"],
     // "latitude": event["latitude"],
+    console.log("recv ",event.data)
+    var data = JSON.parse(event.data)
+    if(this.state.locatorType[data.LOC_type] == 'MSG'){
+      this.setState((previousState) => {
+        return {
+          userLocations:
+          {...previousState.userLocations,
+            [data.buddycode]:{
+              firstName: data.firstName,
+              lastName: data.lastName,
+              longitude:data.longitude,
+              latitude:data.latitude
+            }
+          }
+        }
+      })
+    }
   }
 
   _getLocationAsync = async () => {
@@ -208,19 +224,37 @@ class MapScreen extends Component{
     }
 
     //Create a Marker for every friends
-    let friends = this.props.friends
-    let markers = friends.map(friend => {
+    // let friends = this.props.friends
+    // let markers = friends.map(friend => {
+    //   return (
+    //     <Marker
+    //       coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
+    //       key = {friend.email}
+    //       onCalloutPress={event => {console.log(event.nativeEvent)}}
+    //       title= {friend.firstName.concat(" ", friend.lastName)}
+    //       description={this.state.status[friend.status]}
+    //     >
+    //         <Callout onPress={() => {console.log("Callout Pressed")}}>
+    //             <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
+    //             <Text>{this.state.status[friend.status]}</Text>
+    //         </Callout>
+    //     </Marker>
+    //   )
+    // })
+
+    let markers = Object.keys(this.state.userLocations).forEach((key) => {
+      var friend = this.state.userLocations[key]
       return (
         <Marker
           coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
-          key = {friend.email}
+          key = {key}
           onCalloutPress={event => {console.log(event.nativeEvent)}}
           title= {friend.firstName.concat(" ", friend.lastName)}
-          description={this.state.status[friend.status]}
+          description={this.state.status[0]}
         >
             <Callout onPress={() => {console.log("Callout Pressed")}}>
                 <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
-                <Text>{this.state.status[friend.status]}</Text>
+                <Text>{this.state.status[0]}</Text>
             </Callout>
         </Marker>
       )

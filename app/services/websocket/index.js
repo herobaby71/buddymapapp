@@ -34,5 +34,6 @@ export class WSService{
 
 export function getWebSocket(endPoint){
   const accessToken = sessionSelectors.get().tokens.access.value
+  // console.log(`${wsConfig.url}${endPoint}?token=${accessToken}`)
   return new WebSocket(`${wsConfig.url}${endPoint}?token=${accessToken}`)
 }
