@@ -22,17 +22,17 @@ class ProfileScreen extends Component {
   render(){
     //Redux Store State items
       console.log(this.props)
-    if (this.props.user.user.status==0){
+    if (this.props.user_prof.status==0){
 		var temp = <Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> Free </Text>
 	}
-	if (this.props.user.user.faceboookAvatar==undefined){
+	if (this.props.user_prof.faceboookAvatar==undefined){
 		var pictureURI= <Avatar
 						large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
 	}
 	else{
 		var pictureURI=<Image
 				style={{width: 75, height: 75}}
-				source={{uri: this.props.user.user.faceboookAvatar}}
+				source={{uri: this.props.user_prof.faceboookAvatar}}
 				/>
 	}
 	return(
@@ -48,11 +48,11 @@ class ProfileScreen extends Component {
 			</View>
 
 			<Text style={styles.title}>PROFILE SCREEN</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user.user.firstName} {this.props.user.user.lastName}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user.user.description}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user.user.status]} </Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user.user.email}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user.user.buddycode}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user_prof.firstName} {this.props.user_prof.lastName}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user_prof.description}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user_prof.status]} </Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user_prof.email}</Text>
+			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user_prof.buddycode}</Text>
 
 
       </View>

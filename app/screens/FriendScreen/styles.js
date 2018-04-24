@@ -2,8 +2,9 @@ import { StyleSheet } from 'react-native';
 import Constants from '../../themes/constants'
 
 export default styles = StyleSheet.create({
-  container:{top: Constants.Harin4, flex:1},
+  container:{ flex:1, backgroundColor:'white'},
   emailEntryContainer:{
+    marginTop: Constants.Harin3,
     marginLeft:Constants.Marin5,
     marginRight: Constants.Marin6,
     flexDirection:'row',
@@ -33,7 +34,7 @@ export default styles = StyleSheet.create({
   },
 
   title: {
-    margin: 24,
+    top: Constants.Harin4,
     fontSize: 30,
     textAlign: 'center',
 	color: 'rgb(111,187,215)',

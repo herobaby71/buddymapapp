@@ -31,6 +31,11 @@ export default styles = StyleSheet.create({
     left: Constants.Marin3,
     backgroundColor:'rgba(0,0,0,0)'
   },
+  avatarContainer:{
+    width: Constants.Harin14,
+    height: Constants.Harin14,
+    borderRadius: Constants.Harin14/2,
+  },
   bubbleView1:{position:'absolute'},
   bubbleView2:{position:'absolute'},
   bubbleView3:{position:'absolute'},
