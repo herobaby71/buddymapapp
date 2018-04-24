@@ -117,7 +117,7 @@ class MapScreen extends Component{
           latitudeDelta: 0.00411,
           longitudeDelta: 0.00211,
         }
-        this.setState({location, region})
+        this.setState({location, region}) //note: even tho region not a state initially made, its being created now
       }
     )
     //Websocket implementation for getting locator of everyone in the group
@@ -206,14 +206,13 @@ class MapScreen extends Component{
       })
     }
   }
-
+  
   getFriendsList = async () => {
     this.props.getFriends()
   }
 
-  goToFriend = () => {
-    Actions.friend()
-    // console.log("THIS IS",this.props.user.user.faceboookAvatar)
+  goToFriendScreen = () => {
+    Actions.friend() // change this later, also jus get rid of that chevron in general
   }
 
   goToUserProfile = () => {
@@ -463,7 +462,7 @@ class MapScreen extends Component{
         }
 
         <View style ={styles.friendScreenArrowContainer}>
-          <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToFriend}>
+          <TouchableOpacity style={styles.friendScreenArrow} onPress = {this.goToFriendScreen}>
             <Icon name='chevron-right' type='entypo' color = '#696969' />
           </TouchableOpacity>
         </View>
@@ -503,7 +502,7 @@ class MapScreen extends Component{
 
         <CreateGroupModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
         <CreateRadiusEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
-        <CreateGroupEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3} />
+        <CreateGroupEventModal containerStyle={styles.modalContent} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3}/>
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
