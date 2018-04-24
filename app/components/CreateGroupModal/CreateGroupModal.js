@@ -28,7 +28,7 @@ class CreateGroupModal extends Component{
 		<Text style={styles.title}> CREATE GROUP</Text>
     <TextInput style={styles.groupEntry} onChangeText={(text) => this.setState({groupname:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='Group Name' />
 		  <TouchableOpacity style = {styles.addGroupButton} onPress = {() => {this.addGroup(); }}>
-				 <Text style={styles.addGroupButton}>Create Group</Text>
+				 <Text style={styles.addGroupButton}>CREATE GROUP</Text>
 			</TouchableOpacity>
     </View>
   );
