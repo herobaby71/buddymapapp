@@ -7,7 +7,7 @@ export default styles = StyleSheet.create({
 		borderWidth:1,
 	  },
 	title: {
-		
+
 		margin: 24,
 		fontSize: 40,
 		textAlign: 'center',
@@ -23,9 +23,9 @@ export default styles = StyleSheet.create({
 	  addGroupButton:{
 			fontWeight:'bold',
 			top:Constants.Harin3,
-			bottom: Constants.Harin3,
-			
-		  
+			bottom: Constants.Harin5,
+
+
 	  },
 
 });

@@ -20,8 +20,8 @@ class NotificationScreen extends Component {
     //Redux Store State items
     return(
       <View style = {styles.container}>
-		<Text style = {styles.notificationTitle}>Notifications:</Text>
-       
+		  <Text style = {styles.notificationTitle}>Notifications:</Text>
+        
       </View>
     )
   }
