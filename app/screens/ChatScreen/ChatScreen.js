@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
-import {Platform, StyleSheet, Text, View } from 'react-native'
+import {TouchableOpacity, Platform, StyleSheet, Text, View } from 'react-native'
 import {GiftedChat, Actions, Bubble, SystemMessage} from 'react-native-gifted-chat'
+import { Actions as Navigator} from 'react-native-router-flux'; //navigation
 import CustomActions from './CustomActions';
 import CustomView from './CustomView';
 import emojiUtils from 'emoji-utils';
 import SlackMessage from './SlackMessage';
 import SideMenu from 'react-native-side-menu';
+import { Icon } from 'react-native-elements'
 import GroupSideMenu from '../../components/GroupSideMenu';
 import styles from './styles'
 import * as sessionSelectors from '../../services/session/selectors'
@@ -222,25 +224,39 @@ class ChatScreen extends Component{
   render(){
     const menu = <GroupSideMenu />;
     return (
-      <GiftedChat
-        messages = {this.state.messages}
-        loop={true}
-        onSend = {this.onSend}
-        loadEarlier = {this.state.loadEarlier}
-        onLoadEarlier={this.state.onLoadEarlier}
-        isLoadingEarlier={this.state.isLoadingEarlier}
+      <View style={{flex:1}}>
+        <View style = {{backgroundColor: '#6fbbd7'}}>
+          <View style={{height:15}} />
+          <View style={styles.headerView}>
+            <TouchableOpacity onPress={() => {Navigator.pop()}}>
+              <Icon name='chevron-left' style={styles.searchImage} type='material-community' color = '#696969' />
+            </TouchableOpacity>
+            <Text style={styles.titleText}>{this.props.group.name}</Text>
+            <TouchableOpacity onPress={() => {Navigator.drawerOpen()}}>
+              <Icon name='menu' style={styles.searchImage} type='entypo' color = '#696969' />
+            </TouchableOpacity>
+         </View>
+       </View>
+        <GiftedChat
+          messages = {this.state.messages}
+          loop={true}
+          onSend = {this.onSend}
+          loadEarlier = {this.state.loadEarlier}
+          onLoadEarlier={this.state.onLoadEarlier}
+          isLoadingEarlier={this.state.isLoadingEarlier}
 
-        user={{
-          _id:1
-        }}
+          user={{
+            _id:1
+          }}
 
-        renderMessage={this.renderMessage}
-        renderActions={this.renderCustomActions}
-        renderCustomView={this.renderCustomView}
-        renderSystemMessage={this.renderSystemMessage}
-        renderFooter={this.renderFooter}
+          renderMessage={this.renderMessage}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
+          renderSystemMessage={this.renderSystemMessage}
+          renderFooter={this.renderFooter}
 
-      />
+        />
+      </View>
     )
   }
 }

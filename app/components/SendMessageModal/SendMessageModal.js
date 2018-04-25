@@ -26,19 +26,14 @@ class SendMessageModal extends Component{
   }
 
   _renderModalContent = () => (
-    <View style = {this.props.containerStyle}>
+    <View style = {styles.container}>
       <ScrollView>
-        <TextInput style={styles.textInput} autoFocus={true} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Enter A Message :)'/>
+        <TextInput style={styles.textInput} onChangeText={(text) => this.setState({email:text})} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Enter A Message :)'/>
         <View
-          style={{
-            height: 1,
-            width: "86%",
-            backgroundColor: "#CED0CE",
-            marginLeft: "1%"
-          }}
+          style={styles.seperatorLine}
         />
         <TouchableOpacity style = {styles.sendButton} onPress = {this.onButtonPressed}>
-          <Text>Send Message</Text>
+          <Text style = {styles.sendButtonText}>Send Message</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>

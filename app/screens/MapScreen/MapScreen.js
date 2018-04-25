@@ -308,12 +308,12 @@ class MapScreen extends Component{
   renderPokeButton = () =>{
     if(this.state.currentFriendVisible){
       var pokeJSX = <TouchableOpacity style = {styles.bubble3} onPress={this.pokeUser}>
-        <Avatar medium icon={{name: 'hand-pointing-right', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'hand-pointing-right', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
       </TouchableOpacity>
     }
     else{
       var pokeJSX = <TouchableOpacity style = {styles.bubble3} onPress={this.goNinjaMode}>
-        <Avatar medium icon={{name: 'ninja', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'ninja', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
       </TouchableOpacity>
     }
     return pokeJSX
@@ -322,12 +322,12 @@ class MapScreen extends Component{
   renderMessageButton = () =>{
     if(this.state.currentFriendVisible){
       var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.messageUser}>
-        <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
       </TouchableOpacity>
     }
     else{
       var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.changeUserStatus}>
-        <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
       </TouchableOpacity>
     }
     return pokeJSX
@@ -484,7 +484,7 @@ class MapScreen extends Component{
             </View>
             <View style={styles.bubbleView2}>
       				<TouchableOpacity style = {styles.bubble2} onPress={this.goToUserProfile}>
-      				  <Avatar medium icon={{name: 'face-profile', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      				  <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face-profile', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
       				</TouchableOpacity>
 			     </View>
           </View>

@@ -23,7 +23,6 @@ export default styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-
   //Avatar Styling
   avatarView:{
     position:'absolute',
