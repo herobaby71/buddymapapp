@@ -159,7 +159,6 @@ class MapScreen extends Component{
 
   goToChat = () =>{
     Actions.chat({group:this.props.groups.groups[this.state.currentGroupIndex]})
-	console.log("THIS IS ",this.props.user.user)
   }
 
   render(){

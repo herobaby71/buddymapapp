@@ -19,10 +19,10 @@ export default styles = StyleSheet.create({
 		alignItems: 'center',
 		textAlign: 'center',
 		borderWidth:1,
-    margin: 5,
+		margin: 5,
 	  },
 	addGroupButton:{
-		top: responsiveHeight(85),
+	top: responsiveHeight(85),
     left: responsiveWidth(12),
     position: 'absolute'
 
