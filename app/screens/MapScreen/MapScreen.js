@@ -311,7 +311,9 @@ class MapScreen extends Component{
 
         <CreateGroupModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
         <CreateRadiusEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
-        <CreateGroupEventModal containerStyle={styles.modalContent} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3}/>
+        <CreateGroupEventModal containerStyle={styles.modalContent} userLoc= {this.state.region}
+              group = {this.props.groups.groups[this.state.currentGroupIndex]}
+              hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3}/>
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
