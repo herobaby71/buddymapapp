@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Text, TouchableOpacity, Platform} from 'react-native';
+import { Text, TouchableOpacity, Platform, Alert} from 'react-native';
 import ChatScreen from '../ChatScreen'
 import Swiper from 'react-native-swiper'
 import { View } from 'react-native-animatable'
@@ -9,6 +9,7 @@ import Modal from 'react-native-modal'
 import CreateGroupModal from '../../components/CreateGroupModal'
 import CreateGroupEventModal from '../../components/CreateGroupEventModal'
 import CreateRadiusEventModal from '../../components/CreateRadiusEventModal'
+import SendMessageModal from '../../components/SendMessageModal'
 import CustomSideMenu from '../../components/CustomSideMenu'
 import SideMenu from 'react-native-side-menu';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
@@ -26,6 +27,7 @@ import { getUser } from '../../services/user'
 
 import _ from 'lodash'
 import styles from './styles'
+import {WSService, getWebSocket} from '../../services/websocket'//websocket call to server
 
 class MapScreen extends Component{
   constructor(props){
@@ -36,10 +38,14 @@ class MapScreen extends Component{
       groupsLoaded:false,
 
       //for status on the avatar and animation
+      userStatus:-1,
       status:{0:"Free", 1:"Chill", 2:"Away", 3:"Busy", 4:"Hidden", 5:"Sleeping"},
+      statusColor:{0:"green", 1:"aqua", 2:"red", 3:"red", 4:"darkgray", 5:"goldenrod"},
+      ninjaMode:false,
       popoverAnimation:"bounceIn",
       popoverVisible:false,
-      currentFriendVisible:-1,
+      currentFriendVisible:false,
+      currentFriendItem:{},
 
       //for utility bar
       utilityPopUp: false,
@@ -50,26 +56,45 @@ class MapScreen extends Component{
 
       //for utility modals
       modalVisible:null,
-      modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal'},
+      modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal', 4:'sendMessageModal'},
 
       //for showing side menu or not
       isOpen:false,
 
       //For map (group) overlay
       currentGroupIndex: 0,
+
+      //WebSocket Status
+      locatorType:{0:'MSG', 1:'WARNING', 2:'GLOBAL', 5:'ENTER', 6:'LEAVE', 7:'JOIN'},
+      userLocations:{},
+      // 'denden':{"firstName":"Monny", "lastName":"HOHO", "longitude":"-77.857966", "latitude":"40.799120"}
     }
+
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this._getLocationAsync, 200)
+      // this.timer = setInterval(this.onSendLocator, 25000)
+      this.timer = setInterval(this.getFriendsList, 12000)
+      this.timer = setInterval(this._getLocationAsync, 500)
       // this.timer = setInterval(this._postLocationAsync, 1000)
-      // this.timer = setInterval(this.getFriendsList, 1000)
       // this.timer = setInterval(validateAccessToken, 900000)
     }
     this.props.getUserInfo()
     this.props.getGroups()
+    this.props.getFriends()
+
+    this._isMounted = false;
+    this._isAlright = null;
+
+    setTimeout(()=> {
+      if (!(_.isEmpty(this.props.user))){
+        if(this.state.userStatus == -1){
+          this.setState({userStatus:this.props.user.user.status})
+        }
+      }
+    }, 1400)
   }
   componentWillReceiveProps(nextProps) {
     //Once group fetching is finished, update the local state
@@ -81,10 +106,11 @@ class MapScreen extends Component{
       this.setState({groups: currentGroupList, groupsLoaded:true})
     }
   }
+
   componentDidMount(){
-    this.swiper.scrollBy(0);
     navigator.geolocation.getCurrentPosition(location => {
         const { latitude, longitude } = location.coords
+        this.swiper.scrollBy(0);
         const region = {
           ...this.state.region,
           latitude,
@@ -95,6 +121,60 @@ class MapScreen extends Component{
         this.setState({location, region}) //note: even tho region not a state initially made, its being created now
       }
     )
+    //Websocket implementation for getting locator of everyone in the group
+    this.websocket = getWebSocket('locator/stream/')
+    this.websocket.onopen = () =>{
+      this.websocket.send(JSON.stringify({command:'join', group:1}))
+    }
+    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
+      this.websocket.onopen = () =>{
+        this.websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
+      }
+    }
+    this.websocket.onmessage = this.onReceiveLoc
+  }
+
+  onSendLocator = () => {
+    // console.log(this.props.groups[this.state.currentGroupIndex])
+    // console.log(this.props.groups)
+    if(!(_.isEmpty(this.props.groups.groups[this.state.currentGroupIndex]))){
+      var com = {command:'send', group: this.props.groups.groups[this.state.currentGroupIndex].id, longitude: this.state.location.coords.longitude, latitude: this.state.location.coords.latitude}
+      console.log("send ",com)
+      websocket = getWebSocket('locator/stream/')
+      websocket.onopen = () => {
+        websocket.send(JSON.stringify({command:'join', group:this.props.groups.groups[this.state.currentGroupIndex].id}))
+        websocket.send(JSON.stringify(com))
+      }
+    }
+  }
+
+  onReceiveLoc = (event) => {
+    // "LOC_type": settings.LOC_TYPE_MESSAGE,
+    // "group": event["group_id"],
+    // "buddycode": event["buddycode"],
+    // "longitude": event["longitude"],
+    // "latitude": event["latitude"],
+    console.log("recv ",event.data)
+    // console.log(this.props.user)
+    var data = JSON.parse(event.data)
+    if(data.buddycode != this.props.user.user.buddycode){
+      if(this.state.locatorType[data.LOC_type] == 'MSG'){
+        this.setState((previousState) => {
+          return {
+            userLocations:
+            {...previousState.userLocations,
+              [data.buddycode]:{
+                firstName: data.firstName,
+                lastName: data.lastName,
+                longitude:data.longitude,
+                latitude:data.latitude,
+                buddycode:data.buddycode
+              }
+            }
+          }
+        })
+      }
+    }
   }
 
   _getLocationAsync = async () => {
@@ -104,6 +184,7 @@ class MapScreen extends Component{
         errorMessage: 'Permission to access location was denied',
       });
     }
+
 
     let location = await Location.getCurrentPositionAsync({});
     if(this.refs.rootRef)
@@ -127,34 +208,184 @@ class MapScreen extends Component{
     }
   }
 
+  getFriendsList = async () => {
+    this.props.getFriends()
+  }
+
   goToFriendScreen = () => {
     Actions.friend() // change this later, also jus get rid of that chevron in general
   }
 
-  getFriendsList = async () => {
-    this.props.getFriends()
+  goToUserProfile = () => {
+    if(this.state.currentFriendVisible){
+      var userProf = this.state.currentFriendItem
+    }
+    else{
+      var userProf = this.props.user.user
+    }
+    Actions.profile({fromMap:true, user_prof:userProf})
   }
 
   showPopover = () => {
     this.setState({popoverVisible:!this.state.popoverVisible})
   }
 
-  // incrementMapLayer = () => {
-  //   this.setState({currentGroupIndex: (this.state.currentGroupIndex+1)%this.props.groups.groups.length})
-  // }
-  //
-  // decrementMapLayer = () => {
-  //   if(this.state.currentGroupIndex == 0){
-  //     this.setState({currentGroupIndex: this.props.groups.groups.length-1})
-  //   }
-  //   else{
-  //     this.setState({currentGroupIndex: (this.state.currentGroupIndex-1)%this.props.groups.groups.length})
-  //   }
-  // }
-
   goToChat = () =>{
     Actions.chat({group:this.props.groups.groups[this.state.currentGroupIndex]})
+	}
+
+  goNinjaMode = () =>{
+    if(this.state.ninjaMode){
+      var newstatus = 0
+    }
+    else{
+      var newstatus = 4
+    }
+    this.setState({ninjaMode:!this.state.ninjaMode, userStatus:newstatus})
+    fetchApi(`api/account/change-status/`,payload = {status:newstatus}, method = 'post', headers = {})
+    .then(response => {
+      console.log("Successfully change user status:",response)
+    })
+    .catch(error => {
+      console.log("error",error)
+    })
+    this.props.getUserInfo()
   }
+
+  renderAvatar = () =>{
+    // console.log(this.props.friends)
+    if (!this.state.currentFriendVisible){
+      if (!(_.isEmpty(this.props.user))){
+        if(this.state.ninjaMode){
+          var avatar = <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+             <Avatar large source={{uri:"https://i.pinimg.com/originals/ff/5d/54/ff5d544fc208ef60504af3b524c81b9d.jpg"}}
+              rounded
+              activeOpacity = {0.85}
+              overlayContainerStyle={{backgroundColor: this.state.statusColor[this.state.userStatus]}}
+              containerStyle={styles.avatarContainer}
+              />
+          </TouchableOpacity>
+        }
+        else{
+          var avatar = <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+             <Avatar large source={{uri: this.props.user.user.faceboookAvatar}}
+              rounded
+              activeOpacity = {0.85}
+              overlayContainerStyle={{backgroundColor: this.state.statusColor[this.state.userStatus]}}
+              containerStyle={styles.avatarContainer}
+              />
+          </TouchableOpacity>
+        }
+      }
+    	else{
+        var avatar = <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+          <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
+        </TouchableOpacity>
+    	}
+    }
+    else{
+      // console.log(this.state.currentFriendItem)
+      if (!(_.isEmpty(this.state.currentFriendItem))){
+        var avatar = <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+          <Avatar
+          large
+          rounded
+          overlayContainerStyle={{backgroundColor: this.state.statusColor[this.state.currentFriendItem.status]}}
+          containerStyle={styles.avatarContainer}
+          source={{uri: this.state.currentFriendItem.faceboookAvatar}}
+          activeOpacity = {0.85}/>
+        </TouchableOpacity>
+      }
+      else{
+        var avatar = <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
+          <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
+        </TouchableOpacity>
+      }
+    }
+    return avatar
+  }
+
+  renderPokeButton = () =>{
+    if(this.state.currentFriendVisible){
+      var pokeJSX = <TouchableOpacity style = {styles.bubble3} onPress={this.pokeUser}>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'hand-pointing-right', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    else{
+      var pokeJSX = <TouchableOpacity style = {styles.bubble3} onPress={this.goNinjaMode}>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'ninja', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    return pokeJSX
+  }
+
+  renderMessageButton = () =>{
+    if(this.state.currentFriendVisible){
+      var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.messageUser}>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    else{
+      var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.changeUserStatus}>
+        <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    return pokeJSX
+  }
+
+  changeUserStatus = async () => {
+    if (!(_.isEmpty(this.props.user))){
+      oldstatus = this.props.user.user.status
+      newstatus = (this.props.user.user.status +1)%6
+      this.setState({userStatus:newstatus})
+      fetchApi(`api/account/change-status/`,payload = {status:newstatus}, method = 'post', headers = {})
+      .then(response => {
+        console.log("Successfully change user status:",response)
+      })
+      .catch(error => {
+        this.setState({userStatus:oldstatus})
+      })
+      this.props.getUserInfo()
+    }
+  }
+
+  pokeUser = () => {
+    console.log("called Poke Func")
+    if (this.state.currentFriendVisible){
+      fetchApi(`api/activity/poke/`,payload = {user_to:this.state.currentFriendItem.email}, method = 'post', headers = {})
+      .then(response => {
+        console.log("Successfully change user status:",response)
+      })
+      .catch(error => {
+        console.log("error",error)
+      })
+    }
+    Alert.alert(
+      'Poked'.concat(" ",this.state.currentFriendItem.firstName , " ", this.state.currentFriendItem.lastName),
+      '',
+      [
+        {text: 'OK', onPress: () => {}},
+      ],
+      { cancelable: false }
+    )
+  }
+
+  messageUser = () => {
+    console.log("called Msg Func")
+    this.setState({modalVisible: 4})
+  }
+  messageUserAPI = (message) => {
+    if (this.state.currentFriendVisible){
+      fetchApi(`api/activity/message/`,payload = {user_to:this.state.currentFriendItem.email, message}, method = 'post', headers = {})
+      .then(response => {
+        console.log("Successfully change user status:",response)
+      })
+      .catch(error => {
+        console.log("error",error)
+      })
+    }
+  }
+
 
   render(){
     // Marker of Friends Location.
@@ -162,31 +393,58 @@ class MapScreen extends Component{
     let mymarker = <View></View>
     if(!_.isEmpty(this.state.location)){
       mymarker  =
-        <MapView.Marker
+        <Marker
           coordinate={{latitude:this.state.location.coords.latitude, longitude:this.state.location.coords.longitude}}
           title= "My Marker"
           description= "Mushi Mush"
-        />
+        >
+          <Callout onPress={() => {console.log("Callout Pressed");this.setState({currentFriendVisible:false})} }>
+              <Text>Its Me Mushi Mushi</Text>
+              <Text>Free</Text>
+          </Callout>
+        </Marker>
     }
 
     //Create a Marker for every friends
     let friends = this.props.friends
     let markers = friends.map(friend => {
-      return (
-        <Marker
-          coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
-          key = {friend.email}
-          onCalloutPress={event => {console.log(event.nativeEvent)}}
-          title= {friend.firstName.concat(" ", friend.lastName)}
-          description={this.state.status[friend.status]}
-        >
-            <Callout onPress={() => {console.log("Callout Pressed")}}>
-                <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
-                <Text>{this.state.status[friend.status]}</Text>
-            </Callout>
-        </Marker>
-      )
+      if(this.state.status[friend.status] != "Hidden"){
+        return (
+          <Marker
+            coordinate={{latitude:Number(friend.latitude), longitude:Number(friend.longitude)}}
+            key = {friend.email}
+            onCalloutPress={event => {console.log(event.nativeEvent)}}
+            title= {friend.firstName.concat(" ", friend.lastName)}
+            description={this.state.status[friend.status]}
+          >
+              <Callout onPress={() => {console.log("Callout Pressed");this.setState({currentFriendItem:friend, currentFriendVisible:true})} }>
+                  <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
+                  <Text>{this.state.status[friend.status]}</Text>
+              </Callout>
+          </Marker>
+        )
+      }
     })
+
+
+    // var markers = Object.keys(this.state.userLocations).map((key) => {
+    //   var friend = this.state.userLocations[key]
+    //   console.log(friend)
+    //   return (
+    //     <Marker
+    //       coordinate={{latitude:Number(friend["latitude"]), longitude:Number(friend["longitude"])}}
+    //       key = {key}
+    //       onCalloutPress={event => {console.log(event.nativeEvent)}}
+    //       title= {friend["firstName"].concat(" ", friend["lastName"])}
+    //       description={this.state.status[0]}
+    //     >
+    //         <Callout onPress={() => {console.log("Callout Pressed")}}>
+    //             <Text>{friend["firstName"].concat(" ", friend["lastName"])}</Text>
+    //             <Text>{this.state.status[0]}</Text>
+    //         </Callout>
+    //     </Marker>
+    //   )
+    // })
 
     //Groups for Group Swiper that shows groups at the bottom
     const groups= this.state.groups.map((group, key) => {
@@ -214,59 +472,21 @@ class MapScreen extends Component{
           {mymarker}
           {markers}
         </MapView>
-        <TouchableOpacity style = {styles.avatarView} onPress={this.showPopover}>
-           <Avatar large icon={{name: 'face', color: 'gray', type: 'material-community', size:57}}  rounded activeOpacity = {0.85}/>
-        </TouchableOpacity>
+        { this.renderAvatar() }
 
         { this.state.popoverVisible &&
           <View animation="bounceIn" style={styles.bubbleView1}>
             <View style={styles.bubbleView3}>
-              <PopoverTouchable>
-                <TouchableOpacity style = {styles.bubble3} onPress={this.showPopover}>
-                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
-                </TouchableOpacity>
-                <Popover
-                  contentStyle={styles.content}
-                  arrowStyle={styles.arrow}
-                  backgroundStyle={styles.popoverBackground}
-                  contentStyle={styles.popoverContent}
-                >
-                  <Text>Poke Me!</Text>
-                </Popover>
-              </PopoverTouchable>
+              {this.renderPokeButton()}
             </View>
             <View style={styles.bubbleView1}>
-              <PopoverTouchable>
-                <TouchableOpacity style = {styles.bubble1} onPress={this.showPopover}>
-                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
-                </TouchableOpacity>
-                <Popover
-                  contentStyle={styles.content}
-                  arrowStyle={styles.arrow}
-                  backgroundStyle={styles.popoverBackground}
-                  contentStyle={styles.popoverContent}
-                  placement="bottom"
-                >
-                  <Text>Eat Me!</Text>
-                </Popover>
-              </PopoverTouchable>
+              {this.renderMessageButton()}
             </View>
             <View style={styles.bubbleView2}>
-              <PopoverTouchable>
-                <TouchableOpacity style = {styles.bubble2} onPress={this.showPopover}>
-                  <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
-                </TouchableOpacity>
-                <Popover
-                  contentStyle={styles.content}
-                  arrowStyle={styles.arrow}
-                  backgroundStyle={styles.popoverBackground}
-                  contentStyle={styles.popoverContent}
-                  placement="bottom"
-                >
-                  <Text>Hide Me!</Text>
-                </Popover>
-              </PopoverTouchable>
-            </View>
+      				<TouchableOpacity style = {styles.bubble2} onPress={this.goToUserProfile}>
+      				  <Avatar medium containerStyle={{backgroundColor:'white'}} icon={{name: 'face-profile', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      				</TouchableOpacity>
+			     </View>
           </View>
         }
 
@@ -312,6 +532,7 @@ class MapScreen extends Component{
         <CreateGroupModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
         <CreateRadiusEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
         <CreateGroupEventModal containerStyle={styles.modalContent} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3}/>
+        <SendMessageModal containerStyle={styles.modalContent} messageFunc={this.messageUserAPI} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 4}/>
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
@@ -336,10 +557,10 @@ class MapScreen extends Component{
   }
 }
 
-
 function mapStateToProps(state){
   return {
     user: state.services.user.user,
+    user_render: state.services.user,
     latest_group_id:state.services.messages.group_id,
     messages: state.services.messages.messages,
     location: state.data.location,
@@ -369,3 +590,15 @@ export default connect(mapStateToProps, mapDispatchToProps)(MapScreen)
 // <TouchableOpacity style = {styles.bubble4} onPress={this.showPopover}>
 //    <Avatar small icon={{name: 'face', color: 'gray', type: 'material-community', size:15}}  rounded activeOpacity = {0.85}/>
 // </TouchableOpacity>
+
+// <PopoverTouchable>
+//   <Popover
+//     contentStyle={styles.content}
+//     arrowStyle={styles.arrow}
+//     backgroundStyle={styles.popoverBackground}
+//     contentStyle={styles.popoverContent}
+//     placement="bottom"
+//   >
+//     <Text>Eat Me!</Text>
+//   </Popover>
+// </PopoverTouchable>
