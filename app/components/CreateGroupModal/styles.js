@@ -26,7 +26,6 @@ export default styles = StyleSheet.create({
 		backgroundColor: '#ecf0f1',
 	  },
 	  addGroupButton:{
-			fontWeight:'bold',
 			top:Constants.Harin1,
 			bottom: Constants.Harin0,
 
