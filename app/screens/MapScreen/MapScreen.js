@@ -418,9 +418,13 @@ class MapScreen extends Component{
             description={this.state.status[friend.status]}
           >
             <Callout onPress={() => {console.log("Callout Pressed");this.setState({currentFriendItem:friend, currentFriendVisible:true})}}>
-              <TouchableOpacity>
-                <Avatar small source={{uri: friend.faceboookAvatar}} containerStyle={{backgroundColor:'white'}} rounded activeOpacity = {0.85}/>
-              </TouchableOpacity>
+              <View style={{alignItems: 'center'}}>
+                <Text>{friend.firstName}</Text>
+                <TouchableOpacity>
+                  <Avatar small source={{uri: friend.faceboookAvatar}} containerStyle={{backgroundColor:'white'}} rounded activeOpacity = {0.85}/>
+                </TouchableOpacity>
+                <Text>{friend.lastName}</Text>
+              </View>
             </Callout>
           </Marker>
         )
