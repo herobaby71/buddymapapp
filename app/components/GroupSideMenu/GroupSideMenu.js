@@ -35,13 +35,13 @@ class GroupSideMenu extends Component{
     }
   }
   render(){
-	  
+
 	lst = []
 	console.log("HERE ",this.props.members )
     if ( this.props.groups.groups.length> 0 ) {
       //console.log(this.props.friends.friends[0].firstName)
       for (var i = 0; i < this.props.groups.groups.length; i++){
-        lst.push(<Text style={styles.paragraph2}>{this.props.groups.groups[i].name}</Text>)
+        lst.push(<Text key={i} style={styles.paragraph2}>{this.props.groups.groups[i].name}</Text>)
       }
     }
     const {onItemSelected, activeScene} = this.props
@@ -57,13 +57,13 @@ class GroupSideMenu extends Component{
         <Text style={styles.groupNameText}>{group.name}</Text>
         <Text style={styles.groupDescriptionText}>{group.description}</Text>
 		<Text style={styles.title}>GROUP MEMBERS</Text>
-		
+
 		<KeyboardAwareScrollView>
         <View>{lst}</View>
         </KeyboardAwareScrollView>
 		<View style={styles.emailEntryContainer}>
             <TextInput style={styles.emailEntry} onChangeText={(text) => this.setState({email:text})} placeholder='Enter Friend Email' />
-            
+
           </View>
 		  <TouchableOpacity style = {styles.addFriendButton} onPress = {() => {this.addMember(); }}>
               <Text style={styles.paragraph}>Add Member</Text>
