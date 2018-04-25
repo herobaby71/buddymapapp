@@ -417,10 +417,11 @@ class MapScreen extends Component{
             title= {friend.firstName.concat(" ", friend.lastName)}
             description={this.state.status[friend.status]}
           >
-              <Callout onPress={() => {console.log("Callout Pressed");this.setState({currentFriendItem:friend, currentFriendVisible:true})} }>
-                  <Text>{friend.firstName.concat(" ", friend.lastName)}</Text>
-                  <Text>{this.state.status[friend.status]}</Text>
-              </Callout>
+            <Callout onPress={() => {console.log("Callout Pressed");this.setState({currentFriendItem:friend, currentFriendVisible:true})}}>
+              <TouchableOpacity>
+                <Avatar small source={{uri: friend.faceboookAvatar}} containerStyle={{backgroundColor:'white'}} rounded activeOpacity = {0.85}/>
+              </TouchableOpacity>
+            </Callout>
           </Marker>
         )
       }
