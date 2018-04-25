@@ -1,24 +1,36 @@
 import { StyleSheet } from 'react-native';
 import { Constants } from '../../themes/';
 export default styles = StyleSheet.create({
+
 	groupEntry: {
-		flex:3,
-		borderColor: '#696969',
-		color: '#696969',
+		alignItems: 'center',
+		textAlign: 'center',
 		borderWidth:1,
-		borderRadius:10,
+		paddingLeft: Constants.Harin5,
+		paddingRight: Constants.Harin5,
 	  },
-	title: {
+
+	 title: {
+
 		margin: 24,
-		fontSize: 30,
+		fontSize: 40,
 		textAlign: 'center',
 		color: 'rgb(111,187,215)',
 	  },
-	  container: {
+
+		ontainer: {
+		flex:3,
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingTop: Constants.statusBarHeight,
 		backgroundColor: '#ecf0f1',
 	  },
+	  addGroupButton:{
+			fontWeight:'bold',
+			top:Constants.Harin1,
+			bottom: Constants.Harin0,
 
-}
+
+	  },
+
+});

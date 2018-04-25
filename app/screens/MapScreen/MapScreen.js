@@ -9,6 +9,7 @@ import Modal from 'react-native-modal'
 import CreateGroupModal from '../../components/CreateGroupModal'
 import CreateGroupEventModal from '../../components/CreateGroupEventModal'
 import CreateRadiusEventModal from '../../components/CreateRadiusEventModal'
+import SendMessageModal from '../../components/SendMessageModal'
 import CustomSideMenu from '../../components/CustomSideMenu'
 import SideMenu from 'react-native-side-menu';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
@@ -55,7 +56,7 @@ class MapScreen extends Component{
 
       //for utility modals
       modalVisible:null,
-      modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal'},
+      modalDict:{1:'groupModal',2:'radiusEventModal',3:'groupEventModal', 4:'sendMessageModal'},
 
       //for showing side menu or not
       isOpen:false,
@@ -107,9 +108,9 @@ class MapScreen extends Component{
   }
 
   componentDidMount(){
-    this.swiper.scrollBy(0);
     navigator.geolocation.getCurrentPosition(location => {
         const { latitude, longitude } = location.coords
+        this.swiper.scrollBy(0);
         const region = {
           ...this.state.region,
           latitude,
@@ -206,7 +207,7 @@ class MapScreen extends Component{
       })
     }
   }
-  
+
   getFriendsList = async () => {
     this.props.getFriends()
   }
@@ -318,6 +319,20 @@ class MapScreen extends Component{
     return pokeJSX
   }
 
+  renderMessageButton = () =>{
+    if(this.state.currentFriendVisible){
+      var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.messageUser}>
+        <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    else{
+      var pokeJSX = <TouchableOpacity style = {styles.bubble1} onPress={this.changeUserStatus}>
+        <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
+      </TouchableOpacity>
+    }
+    return pokeJSX
+  }
+
   changeUserStatus = async () => {
     if (!(_.isEmpty(this.props.user))){
       oldstatus = this.props.user.user.status
@@ -354,6 +369,23 @@ class MapScreen extends Component{
       { cancelable: false }
     )
   }
+
+  messageUser = () => {
+    console.log("called Msg Func")
+    this.setState({modalVisible: 4})
+  }
+  messageUserAPI = (message) => {
+    if (this.state.currentFriendVisible){
+      fetchApi(`api/activity/message/`,payload = {user_to:this.state.currentFriendItem.email, message}, method = 'post', headers = {})
+      .then(response => {
+        console.log("Successfully change user status:",response)
+      })
+      .catch(error => {
+        console.log("error",error)
+      })
+    }
+  }
+
 
   render(){
     // Marker of Friends Location.
@@ -425,7 +457,6 @@ class MapScreen extends Component{
       )
     })
 
-
     //Initialize the menubar
     const menu = <CustomSideMenu activeScene="map" onItemSelected={this.onMenuItemSelected} />;
 
@@ -441,7 +472,7 @@ class MapScreen extends Component{
           {mymarker}
           {markers}
         </MapView>
-        {this.renderAvatar()}
+        { this.renderAvatar() }
 
         { this.state.popoverVisible &&
           <View animation="bounceIn" style={styles.bubbleView1}>
@@ -449,9 +480,7 @@ class MapScreen extends Component{
               {this.renderPokeButton()}
             </View>
             <View style={styles.bubbleView1}>
-              <TouchableOpacity style = {styles.bubble1} onPress={this.changeUserStatus}>
-                <Avatar medium icon={{name: 'face', color: 'gray', type: 'material-community', size:23}}  rounded activeOpacity = {0.85}/>
-              </TouchableOpacity>
+              {this.renderMessageButton()}
             </View>
             <View style={styles.bubbleView2}>
       				<TouchableOpacity style = {styles.bubble2} onPress={this.goToUserProfile}>
@@ -503,6 +532,7 @@ class MapScreen extends Component{
         <CreateGroupModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 1} />
         <CreateRadiusEventModal containerStyle={styles.modalContent} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 2} />
         <CreateGroupEventModal containerStyle={styles.modalContent} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 3}/>
+        <SendMessageModal containerStyle={styles.modalContent} messageFunc={this.messageUserAPI} userLoc= {this.state.region} hideModal={() => {this.setState({modalVisible:null})}} modalVisible={this.state.modalVisible === 4}/>
 
         <View style ={styles.groupSwiperContainer}>
           <Swiper
