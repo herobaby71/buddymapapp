@@ -236,7 +236,7 @@ class ChatScreen extends Component{
               <Icon name='menu' style={styles.searchImage} type='entypo' color = '#696969' />
             </TouchableOpacity>
          </View>
-       </View>
+        </View>
         <GiftedChat
           messages = {this.state.messages}
           loop={true}

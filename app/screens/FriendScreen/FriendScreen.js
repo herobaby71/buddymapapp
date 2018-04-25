@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux'
 import { fetchApi } from '../../services/api'
+import {Icon} from 'react-native-elements'
 import { fetchFriendsFromAPI } from '../../data/friends/apis'
 import { fetchRequestsFromAPI } from '../../data/friendrequests/apis'
 import _ from 'lodash'
@@ -216,7 +217,16 @@ class FriendScreen extends Component{
     // console.log(JSON.stringify(this.props.friendrequests))
       return(
       <View style = {styles.container}>
-          <Text style={styles.title}>My Friend List</Text>
+        <View style = {{backgroundColor: '#6fbbd7'}}>
+          <View style={{height:15}} />
+          <View style={styles.headerView}>
+            <TouchableOpacity onPress={() => {Actions.drawerOpen()}}>
+              <Icon name='menu' style={styles.searchImage} type='entypo' color = '#696969' />
+            </TouchableOpacity>
+            <Text style={styles.titleText}>Friend List</Text>
+            <View></View>
+         </View>
+        </View>
           <List containerStyle={{ borderTopWidth: 0, borderBottomWidth: 0 }}>
             <FlatList
               data={this.state.friends}

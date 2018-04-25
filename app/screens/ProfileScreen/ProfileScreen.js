@@ -36,30 +36,31 @@ class ProfileScreen extends Component {
 				/>
 	}
 	return(
-
-      <View style = {styles.container}>
-			 <TouchableOpacity style={styles.chevronArrow} onPress = {() => Actions.pop()}>
-				<Icon name='chevron-left' type='entypo' color = '#696969' />
-			</TouchableOpacity>
-			<View style={{
-			  justifyContent:'center',
-			  alignItems: 'center'}}>
-			  {pictureURI}
-			</View>
-
-			<Text style={styles.title}>PROFILE SCREEN</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user_prof.firstName} {this.props.user_prof.lastName}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user_prof.description}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user_prof.status]} </Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user_prof.email}</Text>
-			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user_prof.buddycode}</Text>
-
-
+      <View style = {{flex:1}}>
+        <View style = {{backgroundColor: '#6fbbd7'}}>
+          <View style={{height:15}} />
+          <View style={styles.headerView}>
+            <TouchableOpacity onPress={() => {Actions.pop()}}>
+              <Icon name='chevron-left' style={styles.searchImage} type='entypo' color = '#696969' />
+            </TouchableOpacity>
+            <Text style={styles.titleText}>Profile</Text>
+            <TouchableOpacity onPress={() => {Actions.pop()}}>
+              <Icon name='chevron-right' style={styles.searchImage} type='entypo' color = '#6fbbd7' />
+            </TouchableOpacity>
+         </View>
+        </View>
+        <View style={{height:15}} />
+  			<View style={{
+  			  justifyContent:'center',
+  			  alignItems: 'center'}}>
+  			  {pictureURI}
+  			</View>
+  			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Name:</Text> {this.props.user_prof.firstName} {this.props.user_prof.lastName}</Text>
+  			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Description:</Text>  {this.props.user_prof.description}</Text>
+  			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Status: </Text> {this.state.status[this.props.user_prof.status]} </Text>
+  			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >Email: </Text> {this.props.user_prof.email}</Text>
+  			<Text style={styles.paragraph}><Text style={{fontWeight:'bold'}} >BuddyCode: </Text> {this.props.user_prof.buddycode}</Text>
       </View>
-
-
-
-
     )
   }
 }

@@ -9,6 +9,23 @@ export default styles = StyleSheet.create({
     marginRight: Constants.Marin6,
     flexDirection:'row',
   },
+  headerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Constants.Harin2,
+    paddingHorizontal: Constants.Marin4
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#aaa',
+  },
+  titleText:{
+    color:'white',
+    fontSize: 18,
+    textAlign: 'center',
+    flex: 1,
+  },
   emailEntry: {
     flex:3,
     borderColor: '#696969',
