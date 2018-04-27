@@ -75,11 +75,11 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      this.timer = setInterval(this.onSendLocator, 15000)
-      this.timer = setInterval(this.getFriendsList, 12000)
-      this.timer = setInterval(this._getLocationAsync, 500)
-      this.timer = setInterval(this._postLocationAsync, 15000)
-      // this.timer = setInterval(validateAccessToken, 900000)
+      // this.timer = setInterval(this.onSendLocator, 15000)
+      this.timer = setInterval(this.getFriendsList, 15000)
+      this.timer = setInterval(this._getLocationAsync, 10000)
+      this.timer = setInterval(this._postLocationAsync, 25000)
+      // this.timer = setInterval(validateAccessToken, 900000)z
     }
     this.props.getUserInfo()
     this.props.getGroups()
@@ -192,14 +192,11 @@ class MapScreen extends Component{
   };
 
   _postLocationAsync = async () =>  {
-    // console.log("User:", this.props.user.email)
+    console.log("long-la:", this.state.location.coords)
     if(!_.isEmpty(this.state.location)){
-      fetchApi(`api/locator/update/`,payload = {longitude:this.state.location.coords.longitude, latitude:this.state.location.coords.latitude}, method = 'post', headers = {})
+      fetchApi(`api/locator/track/`,payload = {longitude:this.state.location.coords.longitude, latitude:this.state.location.coords.latitude}, method = 'post', headers = {})
       .then(response => {
-        if(response.success){
-        }
-        else{
-        }
+        console.log("post loc async:", response)
       })
       .catch(error => {
         console.log("error",error)
