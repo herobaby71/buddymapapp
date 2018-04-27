@@ -231,7 +231,7 @@ class FriendScreen extends Component{
             <FlatList
               data={this.state.friends}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress = {(item) => this.goToUserProfile(item)}>
+                <TouchableOpacity onPress = {() => this.goToUserProfile(item)}>
                   <ListItem
                     roundAvatar
                     title={`${item.firstName} ${item.lastName} (${item.buddycode})`}
