@@ -4,12 +4,23 @@ import Constants from '../../themes/constants'
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Constants.Harin5,
+    backgroundColor: 'white',
   },
-    notificationTitle: {
-    margin: 24,
-    fontSize: 30,
-    textAlign: 'left',
-	color: 'rgb(111,187,215)',
+  headerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Constants.Harin2,
+    paddingHorizontal: Constants.Marin4
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#aaa',
+  },
+  titleText:{
+    color:'white',
+    fontSize: 18,
+    textAlign: 'center',
+    flex: 1,
   },
 });

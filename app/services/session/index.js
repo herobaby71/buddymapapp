@@ -50,14 +50,21 @@ const onRequestFailed = (exception) => {
 	throw exception;
 };
 
-export function socialAuthenticate(token){
-	return (dispatch) => {
-		dispatch(actionCreators.updating())
-		api.authenticateFacebook(token)
-		.then(onRequestSuccess)
-		.catch(onRequestFailed);
-	}
+export const socialAuthenticate = (token) => {
+	store.dispatch(actionCreators.updating)
+  return api.authenticateFacebook(token)
+  .then(onRequestSuccess)
+  .catch(onRequestFailed);
 }
+// export function socialAuthenticate(token){
+// 	console.log("social Auth token:", token)
+// 	return (dispatch) => {
+// 		dispatch(actionCreators.updating())
+// 		api.authenticateFacebook(token)
+// 		.then(onRequestSuccess)
+// 		.catch(onRequestFailed);
+// 	}
+// }
 export function authenticate(email, password){
 	return (dispatch) => {
 		dispatch(actionCreators.updating())

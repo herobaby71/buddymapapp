@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; //UI and components
-import { Text, TextInput, Animated, ScrollView, Image, ImageBackground, Platform, TouchableOpacity } from 'react-native';
+import { Alert, Text, TextInput, Animated, ScrollView, Image, ImageBackground, Platform, TouchableOpacity } from 'react-native';
 import { View } from 'react-native-animatable'
 import Fade  from '../../components/Fade'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -28,6 +28,7 @@ class LoginScreen extends Component{
       buddycode:"",
       firstName:"",
       lastName:"",
+      fbtoken:"",
       error_message:"",
       successAuth:false,
       selectedIndex:0,
@@ -54,7 +55,7 @@ class LoginScreen extends Component{
         var credentials = sessionSelectors.get()
         console.log("Credentials after initial timeout:",credentials)
         if (!(_.isEmpty(credentials.tokens.access.value))){
-          Actions.map({ type:ActionConst.RESET})
+          Actions.drawer({ type:ActionConst.RESET})
         }
         else{
           console.log("There is an error in the code")
@@ -74,13 +75,24 @@ class LoginScreen extends Component{
       });
     if (type === 'success') {
       // Get the user's name using Facebook's Graph API
-      const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${token}`);
-      Alert.alert(
-        'Logged in!',
-        `Hi ${(await response.json()).name}!`,
-      );
+      this.setState({fbtoken:token})
+      await this.fbsignin(token)
+      const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
     }
+  }
+
+  fbsignin = (token) => {
+    socialAuthenticate(token)
+    setTimeout(()=> {
+      var credentials = sessionSelectors.get()
+      console.log("Credentials after initial timeout:",credentials)
+      if (!(_.isEmpty(credentials.tokens.access.value))){
+        Actions.drawer({ type:ActionConst.RESET})
+      }
+      else{
+        console.log("There is an error in the code")
+      }
+    }, 1500)
   }
 
   register = () =>{
@@ -104,7 +116,7 @@ class LoginScreen extends Component{
 
 
   redirectMap = () => {
-    Actions.map({ type:'replace' })
+    Actions.drawer({ type:'replace' })
   }
 
   redirectFriend = () => {
@@ -165,7 +177,7 @@ class LoginScreen extends Component{
                 button
                 iconSize={18}
                 style = {styles.signInButtonFacebook}
-                onPress = {() => this.facebookSignIn()}
+                onPress = {() => {this.facebookSignIn()}}
                 type='facebook'
               />
             </Fade>

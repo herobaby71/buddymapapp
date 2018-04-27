@@ -169,7 +169,7 @@ class FriendScreen extends Component{
       platform="ios"
       onChangeText={this.handleSearchFriend}
       cancelButtonTitle="Cancel"
-      placeholder='Search' />
+      placeholder='Search Messages ...' />
   };
 
   renderFooter = () => {
