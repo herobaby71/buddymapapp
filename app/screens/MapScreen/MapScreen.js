@@ -75,10 +75,10 @@ class MapScreen extends Component{
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!!',
       });
     } else {
-      // this.timer = setInterval(this.onSendLocator, 25000)
+      this.timer = setInterval(this.onSendLocator, 15000)
       this.timer = setInterval(this.getFriendsList, 12000)
       this.timer = setInterval(this._getLocationAsync, 500)
-      // this.timer = setInterval(this._postLocationAsync, 1000)
+      this.timer = setInterval(this._postLocationAsync, 15000)
       // this.timer = setInterval(validateAccessToken, 900000)
     }
     this.props.getUserInfo()
