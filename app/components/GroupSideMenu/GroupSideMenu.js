@@ -19,7 +19,7 @@ class GroupSideMenu extends Component{
   }
   addMember(){
     if(!_.isEmpty(this.state.email)){
-      fetchApi(`api/group/adduser/`,payload = {user_email:this.state.email, group_id:this.props.latest_group_id}, method = 'post', headers = {})
+      fetchApi(`api/group/adduser/`,payload = {user_email:this.state.email, group_id:this.props.items[0].routes[0].params.group.id}, method = 'post', headers = {})
       .then(response => {
         console.log("Response Add Member to Group:", response)
         if(response.success){

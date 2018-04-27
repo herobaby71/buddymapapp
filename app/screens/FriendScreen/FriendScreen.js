@@ -249,7 +249,7 @@ class FriendScreen extends Component{
               onEndReachedThreshold={50}
             />
           </List>
-
+          <KeyboardAwareScrollView>
           <View style={styles.emailEntryContainer}>
             <TextInput style={styles.emailEntry} onChangeText={(text) => this.setState({email:text})}  underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email Address' />
             <TouchableOpacity style = {styles.addFriendButton} onPress = {() => {this.addFriend(); this.setState({friendRequestNotificationVisible:true})}}>
@@ -261,6 +261,7 @@ class FriendScreen extends Component{
           {this.state.friendRequestNotificationVisible && !this.state.addFriendSuccess &&
             <Text>User does not exist!</Text>}
           {friendReqestsJSX}
+          </KeyboardAwareScrollView>
       </View>
     )
   }

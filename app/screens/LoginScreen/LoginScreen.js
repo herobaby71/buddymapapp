@@ -54,7 +54,7 @@ class LoginScreen extends Component{
         var credentials = sessionSelectors.get()
         console.log("Credentials after initial timeout:",credentials)
         if (!(_.isEmpty(credentials.tokens.access.value))){
-          Actions.drawer.drawer({ type:ActionConst.RESET})
+          Actions.drawer({ type:ActionConst.RESET})
         }
         else{
           console.log("There is an error in the code")
@@ -80,7 +80,7 @@ class LoginScreen extends Component{
         var credentials = sessionSelectors.get()
         console.log("Credentials after initial timeout:",credentials)
         if (!(_.isEmpty(credentials.tokens.access.value))){
-          Actions.drawer.drawer({ type:ActionConst.RESET})
+          Actions.drawer({ type:ActionConst.RESET})
         }
         else{
           console.log("There is an error in the code")

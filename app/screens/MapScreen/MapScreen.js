@@ -77,8 +77,8 @@ class MapScreen extends Component{
     } else {
       // this.timer = setInterval(this.onSendLocator, 15000)
       this.timer = setInterval(this.getFriendsList, 15000)
-      this.timer = setInterval(this._getLocationAsync, 10000)
-      this.timer = setInterval(this._postLocationAsync, 25000)
+      // this.timer = setInterval(this._getLocationAsync, 10000)
+      // this.timer = setInterval(this._postLocationAsync, 25000)
       // this.timer = setInterval(validateAccessToken, 900000)z
     }
     this.props.getUserInfo()
